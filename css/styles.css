@@ -293,27 +293,67 @@ ul{ list-style:none; }
    ORDER
    ===================================================================== */
 .order-section{ padding:clamp(56px,9vw,120px) 0; }
-.order-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1.4rem; margin-top:2.8rem; }
-.order-card{
-  background:var(--bg-2); border-radius:var(--radius); padding:clamp(1.8rem,4vw,2.6rem);
-  border:1px solid var(--line-2); box-shadow:var(--shadow-s); text-align:center;
-  display:flex; flex-direction:column; align-items:center; gap:.8rem;
+
+/* Delivery app cards */
+.delivery-grid{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:1.4rem;
+  margin-top:2.8rem;
 }
-.order-icon{ width:62px; height:62px; border-radius:16px; display:grid; place-items:center;
-  background:var(--gold-lite); color:var(--wine); margin-bottom:.4rem; }
-.order-icon .ic{ width:28px; height:28px; }
-.order-card h3{ font-family:var(--display); font-weight:500; font-size:1.55rem; }
-.order-card p{ color:var(--ink-2); max-width:38ch; }
-.order-card .btn{ margin-top:.6rem; }
-.platforms{ display:flex; flex-wrap:wrap; justify-content:center; gap:.6rem; margin-top:.8rem; }
-.platform{
-  font-weight:700; font-size:.85rem; color:var(--ink-2);
-  padding:.6rem 1rem; border-radius:10px; background:var(--bg);
-  box-shadow:inset 0 0 0 1.5px var(--line); position:relative; transition:all .2s var(--ease);
+.delivery-card{
+  --accent:var(--gold-deep);
+  position:relative; overflow:hidden;
+  background:var(--bg-2); border-radius:var(--radius);
+  padding:clamp(1.8rem,3.6vw,2.4rem) clamp(1.4rem,3vw,2rem);
+  border:1px solid var(--line-2); box-shadow:var(--shadow-s);
+  display:flex; flex-direction:column; align-items:center; text-align:center; gap:.55rem;
+  color:var(--ink); text-decoration:none;
+  transition:transform .28s var(--ease), box-shadow .28s var(--ease), border-color .28s var(--ease);
 }
-.platform[data-soon]::after{ content:"Soon"; position:absolute; top:-8px; right:-8px; font-size:.6rem; font-weight:800;
-  background:var(--olive); color:#fff; padding:.1rem .35rem; border-radius:999px; letter-spacing:.04em; }
-.platform:hover{ color:var(--ink); box-shadow:inset 0 0 0 1.5px var(--gold); }
+.delivery-card::before{
+  content:""; position:absolute; inset:0 0 auto 0; height:5px;
+  background:var(--accent);
+}
+.delivery-card:hover{
+  transform:translateY(-6px); box-shadow:var(--shadow);
+  border-color:color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.delivery-logo{
+  width:64px; height:64px; border-radius:18px; display:grid; place-items:center;
+  background:color-mix(in srgb, var(--accent) 14%, var(--bg));
+  color:var(--accent); margin-bottom:.3rem;
+}
+.delivery-logo .ic{ width:30px; height:30px; }
+.delivery-app{ font-family:var(--display); font-weight:600; font-size:1.5rem; line-height:1.1; }
+.delivery-desc{ color:var(--ink-2); font-size:.92rem; }
+.delivery-cta{
+  margin-top:.7rem; font-weight:800; font-size:.9rem; letter-spacing:.02em;
+  color:#fff; background:var(--accent);
+  padding:.68rem 1.4rem; border-radius:999px;
+  display:inline-flex; align-items:center; gap:.4rem;
+  transition:gap .25s var(--ease), filter .25s var(--ease);
+}
+.delivery-card:hover .delivery-cta{ gap:.7rem; filter:brightness(1.05); }
+.delivery-cta em{ font-style:normal; }
+
+/* Brand accents per app */
+.delivery-card[data-app="skip"]{     --accent:#FF6B00; }  /* SkipTheDishes orange */
+.delivery-card[data-app="uber"]{     --accent:#068f4e; }  /* Uber Eats green      */
+.delivery-card[data-app="doordash"]{ --accent:#E7361B; }  /* DoorDash red         */
+
+/* "Coming soon" state — until real links are added */
+.delivery-card[data-soon]{ cursor:default; }
+.delivery-card[data-soon]::after{
+  content:"Coming soon"; position:absolute; top:12px; right:12px;
+  font-size:.62rem; font-weight:800; letter-spacing:.05em; text-transform:uppercase;
+  background:var(--olive); color:#fff; padding:.2rem .5rem; border-radius:999px;
+}
+.delivery-card[data-soon] .delivery-cta{ background:var(--ink-3); }
+.delivery-card[data-soon]:hover{ transform:none; box-shadow:var(--shadow-s); border-color:var(--line-2); }
+.delivery-card[data-soon]:hover .delivery-cta{ gap:.4rem; filter:none; }
+
+.delivery-foot{ margin-top:2rem; color:var(--ink-2); max-width:60ch; margin-inline:auto; }
+.delivery-foot a{ color:var(--wine); font-weight:600; text-decoration:none; border-bottom:1px solid color-mix(in srgb, var(--wine) 35%, transparent); }
+.delivery-foot a:hover{ color:var(--ink); }
 
 /* =====================================================================
    CHEFS
@@ -456,7 +496,7 @@ ul{ list-style:none; }
 .reveal{ opacity:0; transform:translateY(26px); transition:opacity .7s var(--ease), transform .7s var(--ease); }
 .reveal.in{ opacity:1; transform:none; }
 /* stagger children within a grid */
-.signature-grid .reveal.in,.order-grid .reveal.in,.chef-grid .reveal.in{ transition-delay:var(--d,0s); }
+.signature-grid .reveal.in,.delivery-grid .reveal.in,.chef-grid .reveal.in{ transition-delay:var(--d,0s); }
 
 /* =====================================================================
    RESPONSIVE
@@ -481,7 +521,7 @@ ul{ list-style:none; }
   .hero-sub{ max-width:none; }
   .about-grid{ grid-template-columns:1fr; }
   .about-media{ max-width:360px; margin-inline:auto; width:100%; }
-  .order-grid,.chef-grid,.contact-grid{ grid-template-columns:1fr; }
+  .delivery-grid,.chef-grid,.contact-grid{ grid-template-columns:1fr; }
   .footer-grid{ grid-template-columns:1fr 1fr; gap:2rem; }
   .footer-brand{ grid-column:1/-1; }
 }

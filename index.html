@@ -171,29 +171,59 @@
     <section class="order-section" id="order">
       <div class="wrap">
         <p class="eyebrow center reveal">Order Online</p>
-        <h2 class="section-title center reveal">Enjoy Royal Bake at Home</h2>
-        <div class="order-grid">
-          <div class="order-card reveal">
-            <div class="order-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" class="ic"><path d="M6 7h12l-1 12.2a1.8 1.8 0 01-1.8 1.6H8.8A1.8 1.8 0 017 19.2L6 7z"/><path d="M9 9V6.5a3 3 0 016 0V9"/></svg>
-            </div>
-            <h3>Order Directly From Us</h3>
-            <p>Browse the menu, add your favourites to the bag and choose <strong>Pickup</strong> or <strong>In-Store</strong> at checkout. We'll have it ready.</p>
-            <a href="#menu" class="btn btn-primary">Start Your Order</a>
-          </div>
-          <div class="order-card reveal">
-            <div class="order-icon" aria-hidden="true">
+        <h2 class="section-title center reveal">Delivery &amp; Pickup, Made Easy</h2>
+        <p class="menu-note center reveal">Order Royal Bake for pickup or delivery through your favourite app — fresh from our oven, straight to your door.</p>
+
+        <!--
+          ========================= HOW TO GO LIVE =========================
+          Once you're approved as a merchant on each app, replace href="#"
+          with your real ordering link and REMOVE the  data-soon  attribute
+          from that <a> tag. That's it — the button becomes clickable.
+
+            Skip:      partners.skipthedishes.com   → your skipthedishes.com/... link
+            Uber Eats: merchants.ubereats.com       → your ubereats.com/... link
+            DoorDash:  get.doordash.com              → your doordash.com/... link
+          ==================================================================
+        -->
+        <div class="delivery-grid">
+
+          <a class="delivery-card reveal" data-app="skip" data-soon
+             href="#" target="_blank" rel="noopener" aria-label="Order on SkipTheDishes (coming soon)">
+            <span class="delivery-logo" aria-hidden="true">
               <svg viewBox="0 0 24 24" class="ic"><path d="M3 13l2-6h11l3 4h2v5h-2M3 13v3h2M3 13h13v3M9 19a2 2 0 11-4 0 2 2 0 014 0zM19 19a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-            </div>
-            <h3>Order for Delivery</h3>
-            <p>Coming soon to your favourite delivery apps across Calgary. Links will be added here as soon as we're live.</p>
-            <div class="platforms">
-              <a href="#" class="platform" aria-label="Uber Eats (coming soon)" data-soon>Uber Eats</a>
-              <a href="#" class="platform" aria-label="SkipTheDishes (coming soon)" data-soon>SkipTheDishes</a>
-              <a href="#" class="platform" aria-label="DoorDash (coming soon)" data-soon>DoorDash</a>
-            </div>
-          </div>
+            </span>
+            <span class="delivery-app">SkipTheDishes</span>
+            <span class="delivery-desc">Delivery across Calgary</span>
+            <span class="delivery-cta">Order Now <em>→</em></span>
+          </a>
+
+          <a class="delivery-card reveal" data-app="uber" data-soon
+             href="#" target="_blank" rel="noopener" aria-label="Order on Uber Eats (coming soon)">
+            <span class="delivery-logo" aria-hidden="true">
+              <svg viewBox="0 0 24 24" class="ic"><path d="M3 13l2-6h11l3 4h2v5h-2M3 13v3h2M3 13h13v3M9 19a2 2 0 11-4 0 2 2 0 014 0zM19 19a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            </span>
+            <span class="delivery-app">Uber Eats</span>
+            <span class="delivery-desc">Fast delivery &amp; pickup</span>
+            <span class="delivery-cta">Order Now <em>→</em></span>
+          </a>
+
+          <a class="delivery-card reveal" data-app="doordash" data-soon
+             href="#" target="_blank" rel="noopener" aria-label="Order on DoorDash (coming soon)">
+            <span class="delivery-logo" aria-hidden="true">
+              <svg viewBox="0 0 24 24" class="ic"><path d="M3 13l2-6h11l3 4h2v5h-2M3 13v3h2M3 13h13v3M9 19a2 2 0 11-4 0 2 2 0 014 0zM19 19a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            </span>
+            <span class="delivery-app">DoorDash</span>
+            <span class="delivery-desc">Delivery to your door</span>
+            <span class="delivery-cta">Order Now <em>→</em></span>
+          </a>
+
         </div>
+
+        <p class="delivery-foot center reveal">
+          Prefer to visit? We're open daily <strong>9 AM – 8 PM</strong> at
+          <a href="https://maps.google.com/?q=3334+32+St+NE,+Calgary,+AB+T1Y+6B9" target="_blank" rel="noopener">3334 32 St NE, Calgary</a>,
+          or call <a href="tel:4036804050">(403) 680&nbsp;4050</a>.
+        </p>
       </div>
     </section>
 
