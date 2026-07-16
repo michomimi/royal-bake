@@ -477,6 +477,52 @@ $$(".nav-link").forEach((a) => a.addEventListener("click", () => {
   hamburger.setAttribute("aria-expanded", "false");
 }));
 
+/* ---------------------------------------------------------------------
+   SMOOTH ANCHOR SCROLL  (eased, longer glide than the native jump)
+   --------------------------------------------------------------------- */
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+function smoothScrollTo(target) {
+  const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--header-h"), 10) || 72;
+  const startY = window.scrollY;
+  const destY = Math.max(0, target.getBoundingClientRect().top + startY - headerH);
+  const distance = destY - startY;
+  if (Math.abs(distance) < 4) return;
+
+  // Duration scales with distance so short hops are quick and long ones glide.
+  const duration = Math.min(1200, Math.max(500, Math.abs(distance) * 0.6));
+  const html = document.documentElement;
+  const prevBehavior = html.style.scrollBehavior;
+  html.style.scrollBehavior = "auto"; // stop CSS smooth from fighting our animation
+
+  let start = null;
+  function step(now) {
+    if (start === null) start = now;
+    const t = Math.min(1, (now - start) / duration);
+    window.scrollTo(0, startY + distance * easeInOutCubic(t));
+    if (t < 1) {
+      requestAnimationFrame(step);
+    } else {
+      html.style.scrollBehavior = prevBehavior;
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+$$('a[href^="#"]').forEach((a) => {
+  a.addEventListener("click", (e) => {
+    const id = a.getAttribute("href");
+    if (id === "#") { e.preventDefault(); return; } // inert placeholder links (e.g. "coming soon")
+    if (!id || id.length < 2) return;
+    const target = document.querySelector(id);
+    if (!target || prefersReducedMotion) return; // let the browser handle it
+    e.preventDefault();
+    smoothScrollTo(target);
+    history.pushState(null, "", id);             // keep the URL hash in sync
+  });
+});
+
 const header = $("#siteHeader");
 const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 20);
 window.addEventListener("scroll", onScroll, { passive: true });
