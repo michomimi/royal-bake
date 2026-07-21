@@ -21,6 +21,67 @@
   const lerp = (a, b, t) => a + (b - a) * t;
 
   /* =================================================================
+     0. AMBIENT BACKGROUND ORBS
+     Seed each major section with slow-drifting blurred colour clouds
+     plus a rotating aurora on the hero + footer. Behind all content.
+     ================================================================= */
+  (function ambient() {
+    const drifts = ["orbDriftA", "orbDriftB", "orbDriftC", "orbDriftD"];
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    // section selector, how many orbs, colour palette, extras
+    const plan = [
+      { sel: ".hero",          n: 3, colors: ["gold", "bright", "olive"], aurora: true },
+      { sel: ".about",         n: 3, colors: ["gold", "olive", "wine"] },
+      { sel: ".menu-section",  n: 4, colors: ["bright", "gold", "olive"] },
+      { sel: ".order-section", n: 3, colors: ["gold", "wine", "olive"] },
+      { sel: ".chefs",         n: 3, colors: ["gold", "bright", "olive"] },
+      { sel: ".contact",       n: 3, colors: ["olive", "gold", "wine"] },
+      { sel: ".site-footer",   n: 3, colors: ["gold", "bright"], dark: true, aurora: true },
+    ];
+
+    plan.forEach(({ sel, n, colors, dark, aurora }) => {
+      const section = $(sel);
+      if (!section) return;
+      section.classList.add("has-ambient");
+
+      const layer = document.createElement("div");
+      layer.className = "ambient" + (dark ? " ambient--dark" : "");
+      layer.setAttribute("aria-hidden", "true");
+
+      if (aurora && !reduce) {
+        const a = document.createElement("div");
+        a.className = "aurora";
+        // vary spin direction / speed a touch per section
+        a.style.animationDuration = rand(34, 46).toFixed(0) + "s";
+        if (Math.random() < 0.5) a.style.animationDirection = "reverse";
+        a.style.top = rand(20, 70) + "%";
+        a.style.left = rand(25, 75) + "%";
+        layer.appendChild(a);
+      }
+
+      for (let i = 0; i < n; i++) {
+        const orb = document.createElement("div");
+        orb.className = "orb orb-" + pick(colors);
+        const size = rand(220, 460);
+        orb.style.width = size + "px";
+        orb.style.height = size + "px";
+        orb.style.left = rand(-8, 88) + "%";
+        orb.style.top = rand(-10, 85) + "%";
+        if (!reduce) {
+          orb.style.animationName = pick(drifts);
+          orb.style.animationDuration = rand(22, 40).toFixed(1) + "s";
+          orb.style.animationDelay = (-rand(0, 12)).toFixed(1) + "s";
+        }
+        layer.appendChild(orb);
+      }
+
+      section.insertBefore(layer, section.firstChild);
+    });
+  })();
+
+  /* =================================================================
      1. SCROLL PROGRESS BAR
      ================================================================= */
   (function scrollProgress() {
