@@ -127,6 +127,7 @@
    JS sets --rx / --ry (rotation) and --mx / --my (glare position).
    --------------------------------------------------------------------- */
 .js-anim .tilt{
+  position:relative;
   transform-style:preserve-3d;
   transform:
     perspective(900px)
