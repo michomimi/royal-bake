@@ -726,15 +726,24 @@ ul{ list-style:none; }
 .cat-card:hover .go{ background:var(--gold); color:#fff; transform:translateX(3px); }
 .cat-card .go svg{ width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2; }
 
-/* ---------- HOME: closing CTA band (living warm gradient) ---------- */
+/* ---------- HOME: closing CTA band (cross-fading photo background) ---------- */
 .cta-band{
   position:relative; overflow:hidden; isolation:isolate;
-  padding:clamp(56px,9vw,110px) 0; text-align:center; color:var(--bg);
-  /* flows through deep brown → wine → gold → olive; animated in animations.css */
-  background:linear-gradient(125deg, #241610 0%, #4a2a1e 26%, #7a3b32 48%, #6e5a2c 70%, #241610 100%);
-  background-size:280% 280%;
+  padding:clamp(64px,10vw,132px) 0; text-align:center; color:var(--bg);
+  background:#241610;
 }
 .cta-band > .wrap{ position:relative; z-index:2; }
+.cta-slideshow{ position:absolute; inset:0; z-index:0; overflow:hidden; background:#241610; }
+.cta-slide{
+  position:absolute; inset:0; background-size:cover; background-position:center;
+  opacity:0; transition:opacity 1.6s var(--ease); transform:translateZ(0);
+}
+.cta-slide.is-active{ opacity:1; }
+/* warm brown/wine scrim keeps it on-brand and the text readable */
+.cta-scrim{
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:linear-gradient(135deg, rgba(30,19,13,.9) 0%, rgba(74,30,26,.76) 52%, rgba(40,26,16,.82) 100%);
+}
 .cta-band h2{ font-family:var(--display); font-weight:500; color:#FFF8EC; font-size:clamp(2rem,5vw,3.2rem); }
 .cta-band p{ color:rgba(246,240,230,.8); max-width:52ch; margin:1rem auto 2rem; }
 .cta-band .eyebrow{ color:var(--gold-lite); justify-content:center; }

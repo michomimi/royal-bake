@@ -124,6 +124,63 @@
   })();
 
   /* =================================================================
+     0.25 CTA BAND SLIDESHOW — cross-fading food photos behind the
+     closing "Fresh From Our Oven" section (same feel as the hero).
+     ================================================================= */
+  (function ctaSlideshow() {
+    const band = $(".cta-band");
+    if (!band) return;
+
+    const IMAGES = [
+      "images/photos/p-27359350.jpg", // hand pulling manoushe
+      "images/photos/p-8029196.jpg",  // charcoal grill
+      "images/photos/p-5191851.jpg",  // breakfast spread
+      "images/photos/p-34349100.jpg", // za'atar baked buns
+    ];
+
+    const show = document.createElement("div");
+    show.className = "cta-slideshow";
+    show.setAttribute("aria-hidden", "true");
+    const slides = IMAGES.map((src) => {
+      const s = document.createElement("div");
+      s.className = "cta-slide";
+      s.style.backgroundImage = `url("${src}")`;
+      show.appendChild(s);
+      return s;
+    });
+    const scrim = document.createElement("div");
+    scrim.className = "cta-scrim";
+    scrim.setAttribute("aria-hidden", "true");
+
+    band.insertBefore(scrim, band.firstChild);
+    band.insertBefore(show, band.firstChild);
+
+    let idx = 0, timer = null;
+    const INTERVAL = 5000;
+    const paint = () => slides.forEach((s, i) => s.classList.toggle("is-active", i === idx));
+    const next = () => { idx = (idx + 1) % slides.length; paint(); };
+    const start = () => { if (timer) clearInterval(timer); if (!reduce) timer = setInterval(next, INTERVAL); };
+
+    paint();
+    start();
+
+    // decode the rest off the critical path
+    let p = 1;
+    const preload = () => {
+      if (p >= IMAGES.length) return;
+      const im = new Image();
+      im.onload = im.onerror = () => { p++; sched(); };
+      im.src = IMAGES[p];
+    };
+    const sched = () => ("requestIdleCallback" in window ? requestIdleCallback(preload, { timeout: 1200 }) : setTimeout(preload, 400));
+    sched();
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) { if (timer) clearInterval(timer); } else start();
+    });
+  })();
+
+  /* =================================================================
      0.5 SECTION DECOR — brand line-art motifs that parallax on scroll
      Injects a .deco layer (faint texture + corner motifs) behind the
      content of every section below the hero, then drifts each motif at
