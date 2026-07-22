@@ -81,7 +81,14 @@ function footerHTML() {
         <a href="tel:${CONFIG.phoneHref}">(403) 680 4050</a>
       </div>
     </div>
-    <div class="wrap footer-bottom"><p>© <span id="year"></span> Royal Bake · Mediterranean Cuisine. All rights reserved.</p></div>
+    <div class="wrap footer-bottom">
+      <p>© <span id="year"></span> Royal Bake · Mediterranean Cuisine. All rights reserved.</p>
+      <nav class="footer-legal" aria-label="Legal">
+        <a href="terms.html">Terms</a>
+        <span aria-hidden="true">·</span>
+        <a href="privacy.html">Privacy</a>
+      </nav>
+    </div>
   </footer>`;
 }
 
