@@ -21,63 +21,105 @@
   const lerp = (a, b, t) => a + (b - a) * t;
 
   /* =================================================================
-     0. AMBIENT BACKGROUND ORBS
-     Seed each major section with slow-drifting blurred colour clouds
-     plus a rotating aurora on the hero + footer. Behind all content.
+     0. HERO PHOTO SLIDESHOW
+     Full-bleed food photography behind the hero copy with a warm dark
+     scrim. Clean GPU-composited cross-fades only (no continuous zoom) so
+     the frosted header has nothing moving to re-blur — that's what keeps
+     scrolling smooth. Swap SLIDES for your own images/menu/*.jpg anytime.
      ================================================================= */
-  (function ambient() {
-    const drifts = ["orbDriftA", "orbDriftB", "orbDriftC", "orbDriftD"];
-    const rand = (a, b) => a + Math.random() * (b - a);
-    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  (function heroSlideshow() {
+    const hero = $(".hero");
+    if (!hero) return;
 
-    // section selector, how many orbs, colour palette, extras
-    const plan = [
-      { sel: ".hero",          n: 3, colors: ["gold", "bright", "olive"], aurora: true },
-      { sel: ".about",         n: 3, colors: ["gold", "olive", "wine"] },
-      { sel: ".menu-section",  n: 4, colors: ["bright", "gold", "olive"] },
-      { sel: ".order-section", n: 3, colors: ["gold", "wine", "olive"] },
-      { sel: ".chefs",         n: 3, colors: ["gold", "bright", "olive"] },
-      { sel: ".contact",       n: 3, colors: ["olive", "gold", "wine"] },
-      { sel: ".site-footer",   n: 3, colors: ["gold", "bright"], dark: true, aurora: true },
-    ];
+    // Curated, verified Mediterranean / bakery photography (Pexels, free
+    // to use). ?w= keeps them sharp but reasonably sized. To use your own
+    // photos, just replace these strings with e.g. "images/menu/bg-1.jpg".
+    const SLIDES = [
+      "https://images.pexels.com/photos/27359350/pexels-photo-27359350.jpeg", // hand pulling manoushe
+      "https://images.pexels.com/photos/28104857/pexels-photo-28104857.jpeg", // flatbread w/ herbs & lemon
+      "https://images.pexels.com/photos/5191851/pexels-photo-5191851.jpeg",  // breakfast mezze spread
+      "https://images.pexels.com/photos/8029196/pexels-photo-8029196.jpeg",  // charcoal grill / BBQ
+      "https://images.pexels.com/photos/34349100/pexels-photo-34349100.jpeg", // za'atar baked buns
+      "https://images.pexels.com/photos/6419394/pexels-photo-6419394.jpeg",  // mezze dips with pita
+    ].map((u) => (u.startsWith("http") ? u + "?auto=compress&cs=tinysrgb&w=1600" : u));
 
-    plan.forEach(({ sel, n, colors, dark, aurora }) => {
-      const section = $(sel);
-      if (!section) return;
-      section.classList.add("has-ambient");
+    // Build slideshow + scrim, insert behind the existing hero content.
+    const show = document.createElement("div");
+    show.className = "hero-slideshow";
+    show.setAttribute("aria-hidden", "true");
+    const slides = SLIDES.map((src) => {
+      const s = document.createElement("div");
+      s.className = "hero-slide";
+      s.style.backgroundImage = `url("${src}")`;
+      show.appendChild(s);
+      return s;
+    });
 
-      const layer = document.createElement("div");
-      layer.className = "ambient" + (dark ? " ambient--dark" : "");
-      layer.setAttribute("aria-hidden", "true");
+    const scrim = document.createElement("div");
+    scrim.className = "hero-scrim";
+    scrim.setAttribute("aria-hidden", "true");
 
-      if (aurora && !reduce) {
-        const a = document.createElement("div");
-        a.className = "aurora";
-        // vary spin direction / speed a touch per section
-        a.style.animationDuration = rand(34, 46).toFixed(0) + "s";
-        if (Math.random() < 0.5) a.style.animationDirection = "reverse";
-        a.style.top = rand(20, 70) + "%";
-        a.style.left = rand(25, 75) + "%";
-        layer.appendChild(a);
-      }
+    hero.insertBefore(scrim, hero.firstChild);
+    hero.insertBefore(show, hero.firstChild);
+    hero.classList.add("has-slideshow");
 
-      for (let i = 0; i < n; i++) {
-        const orb = document.createElement("div");
-        orb.className = "orb orb-" + pick(colors);
-        const size = rand(220, 460);
-        orb.style.width = size + "px";
-        orb.style.height = size + "px";
-        orb.style.left = rand(-8, 88) + "%";
-        orb.style.top = rand(-10, 85) + "%";
-        if (!reduce) {
-          orb.style.animationName = pick(drifts);
-          orb.style.animationDuration = rand(22, 40).toFixed(1) + "s";
-          orb.style.animationDelay = (-rand(0, 12)).toFixed(1) + "s";
-        }
-        layer.appendChild(orb);
-      }
+    // Dots — placed in the copy flow so they line up with the text.
+    const dotsWrap = document.createElement("div");
+    dotsWrap.className = "hero-dots";
+    dotsWrap.setAttribute("role", "tablist");
+    dotsWrap.setAttribute("aria-label", "Hero images");
+    const dots = slides.map((_, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("aria-label", "Show hero image " + (i + 1));
+      b.addEventListener("click", () => go(i, true));
+      dotsWrap.appendChild(b);
+      return b;
+    });
+    const copy = $(".hero-copy") || hero;
+    copy.appendChild(dotsWrap);
 
-      section.insertBefore(layer, section.firstChild);
+    let idx = 0;
+    let timer = null;
+    const INTERVAL = 5200;
+
+    function paint() {
+      slides.forEach((s, i) => s.classList.toggle("is-active", i === idx));
+      dots.forEach((d, i) => d.classList.toggle("is-active", i === idx));
+    }
+    function go(n, userDriven) {
+      idx = (n + slides.length) % slides.length;
+      paint();
+      if (userDriven) restart();
+    }
+    function next() { go(idx + 1); }
+    function restart() {
+      if (timer) clearInterval(timer);
+      if (!reduce) timer = setInterval(next, INTERVAL);
+    }
+
+    paint();       // show first slide immediately
+    restart();     // begin auto-advance (skipped under reduced-motion)
+
+    // Decode the remaining photos one at a time, off the critical path, so
+    // the first paint isn't held up decoding six large JPEGs at once.
+    let p = 1;
+    const preloadNext = () => {
+      if (p >= SLIDES.length) return;
+      const im = new Image();
+      im.onload = im.onerror = () => { p++; schedulePreload(); };
+      im.src = SLIDES[p];
+    };
+    const schedulePreload = () => {
+      if ("requestIdleCallback" in window) requestIdleCallback(preloadNext, { timeout: 1200 });
+      else setTimeout(preloadNext, 400);
+    };
+    schedulePreload();
+
+    // Pause while the tab is hidden — saves cycles, resyncs cleanly.
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) { if (timer) clearInterval(timer); }
+      else restart();
     });
   })();
 
@@ -286,29 +328,41 @@
      6. PARALLAX on arched media
      ================================================================= */
   (function parallax() {
-    const items = $$(".hero-media .arch, .about-media .arch").map((el) => {
-      el.setAttribute("data-parallax", "");
-      return el;
-    });
-    if (!items.length) return;
+    const els = $$(".hero-media .arch, .about-media .arch");
+    els.forEach((el) => el.setAttribute("data-parallax", ""));
+    // Only parallax elements that are actually laid out (the hero arch is
+    // hidden under the slideshow).
+    const targets = els.filter((el) => el.offsetParent !== null);
+    if (!targets.length) return;
 
+    // Measure document-relative positions ONCE (and on resize/load). During
+    // scroll we read only window.scrollY — never the layout — so there's no
+    // per-frame reflow, which is what makes scrolling smooth.
+    let boxes = [];
+    function measure() {
+      const sc = window.scrollY;
+      boxes = targets.map((el) => {
+        const r = el.getBoundingClientRect();
+        return { el, top: r.top + sc, h: r.height };
+      });
+    }
     let ticking = false;
     function update() {
-      const vh = window.innerHeight;
-      items.forEach((el) => {
-        const r = el.getBoundingClientRect();
-        if (r.bottom < 0 || r.top > vh) return;
-        // -1 (below) .. 1 (above), 0 when centred
-        const progress = (vh / 2 - (r.top + r.height / 2)) / (vh / 2);
-        el.style.setProperty("--parallax", (progress * 26).toFixed(1) + "px");
-      });
+      const vh = window.innerHeight, sc = window.scrollY;
+      for (const b of boxes) {
+        const center = b.top + b.h / 2 - sc;      // distance from viewport top
+        if (center < -b.h || center > vh + b.h) continue;
+        const progress = (vh / 2 - center) / (vh / 2);
+        b.el.style.setProperty("--parallax", (progress * 22).toFixed(1) + "px");
+      }
       ticking = false;
     }
-    window.addEventListener("scroll", () => {
-      if (!ticking) { ticking = true; raf(update); }
-    }, { passive: true });
-    window.addEventListener("resize", update, { passive: true });
-    update();
+    function onScroll() { if (!ticking) { ticking = true; raf(update); } }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", () => { measure(); update(); }, { passive: true });
+    window.addEventListener("load", () => { measure(); update(); });
+    measure(); update();
   })();
 
   /* =================================================================
