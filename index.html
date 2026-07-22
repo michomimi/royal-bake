@@ -6,51 +6,18 @@
   <title>Royal Bake — Mediterranean Cuisine | Calgary</title>
   <meta name="description" content="Royal Bake — authentic Mediterranean bakery in Calgary. Freshly baked manakish, mini pies, breakfast, BBQ and family platters, made daily with heart and heritage." />
 
-  <!-- Fonts: Fraunces (display) + Manrope (body/UI) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <!-- Amiri: an elegant Arabic naskh for the dish names -->
   <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
 
   <link rel="icon" type="image/png" href="images/logo.png" />
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/animations.css" />
 </head>
-<body>
+<body data-page="home">
+  <main id="page">
 
-  <!-- ============ HEADER ============ -->
-  <header class="site-header" id="siteHeader">
-    <div class="wrap header-inner">
-      <a href="#home" class="brand" aria-label="Royal Bake home">
-        <img src="images/logo.png" alt="Royal Bake" class="brand-logo" />
-      </a>
-
-      <nav class="nav" id="primaryNav" aria-label="Primary">
-        <a href="#home" class="nav-link">Home</a>
-        <a href="#about" class="nav-link">About</a>
-        <a href="#menu" class="nav-link">Menu</a>
-        <a href="#order" class="nav-link">Order</a>
-        <a href="#contact" class="nav-link">Contact</a>
-      </nav>
-
-      <div class="header-actions">
-        <a href="tel:4036804050" class="header-phone" aria-label="Call Royal Bake">
-          <svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><path d="M6.6 10.8a15.9 15.9 0 006.6 6.6l2.2-2.2a1 1 0 011-.24 11.4 11.4 0 003.6.58 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.4 11.4 0 00.58 3.6 1 1 0 01-.24 1z"/></svg>
-          <span>(403) 680&nbsp;4050</span>
-        </a>
-        <button class="cart-btn" id="cartBtn" aria-label="Open your order" aria-haspopup="dialog">
-          <svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><path d="M6 7h12l-1 12.2a1.8 1.8 0 01-1.8 1.6H8.8A1.8 1.8 0 017 19.2L6 7z"/><path d="M9 9V6.5a3 3 0 016 0V9"/></svg>
-          <span class="cart-count" id="cartCount" data-empty="true">0</span>
-        </button>
-        <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="primaryNav">
-          <span></span><span></span><span></span>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <main>
     <!-- ============ HERO ============ -->
     <section class="hero" id="home">
       <div class="hero-glow" aria-hidden="true"></div>
@@ -60,8 +27,8 @@
           <h1 class="hero-title reveal">A Taste of <em>Tradition</em> Baked Fresh Daily</h1>
           <p class="hero-sub reveal">Warm flavours, honest ingredients and family recipes passed down through generations — from our oven in Calgary to your table.</p>
           <div class="hero-cta reveal">
-            <a href="#menu" class="btn btn-primary">View the Menu</a>
-            <a href="#order" class="btn btn-ghost">Order Online</a>
+            <a href="menu.html" class="btn btn-primary">View the Menu</a>
+            <a href="menu.html#order" class="btn btn-ghost">Order Online</a>
           </div>
           <div class="hero-trust reveal">
             <div class="stars" aria-label="Rated 5 out of 5">
@@ -80,9 +47,7 @@
             <img src="images/menu/hero.jpg" alt="" onerror="this.remove()" />
             <span class="arch-label">Add <code>images/menu/hero.jpg</code></span>
           </div>
-          <div class="hero-badge">
-            <span>Baked</span><strong>Daily</strong>
-          </div>
+          <div class="hero-badge"><span>Baked</span><strong>Daily</strong></div>
         </div>
       </div>
     </section>
@@ -95,351 +60,89 @@
       </div>
     </div>
 
-    <!-- ============ ABOUT ============ -->
-    <section class="about" id="about">
-      <div class="wrap about-grid">
-        <div class="about-media reveal">
-          <div class="arch arch-tall" data-photo="about.jpg">
-            <img src="images/menu/about.jpg" alt="" onerror="this.remove()" />
-            <span class="arch-label">Add <code>images/menu/about.jpg</code></span>
-          </div>
-        </div>
-        <div class="about-copy">
-          <p class="eyebrow reveal">Our Story</p>
-          <h2 class="section-title reveal">The Heart of<br>Middle Eastern Baking</h2>
-          <p class="lead reveal">At Royal Bake, we bring the rich flavours and timeless traditions of Middle Eastern baking straight to your table.</p>
-          <p class="reveal">With over 30 years of experience in the art of bakery and food making, our passion lies in crafting authentic, hand-prepared delights like manakish, fatayer and freshly baked breads and pastries — each made with love, heritage and the finest ingredients. Every bite tells a story rooted in culture and family tradition.</p>
-          <div class="about-values reveal">
-            <div class="value">
-              <svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><path d="M12 3c3 3 5 5 5 8a5 5 0 01-10 0c0-3 2-5 5-8z"/></svg>
-              <span>Fresh, quality ingredients</span>
-            </div>
-            <div class="value">
-              <svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><path d="M4 12h16M4 12l4-4M4 12l4 4"/><path d="M20 6v12"/></svg>
-              <span>Authentic Mediterranean flavours</span>
-            </div>
-            <div class="value">
-              <svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><path d="M3 20l4-9 5 4 4-8 5 13"/></svg>
-              <span>Baked fresh, all day long</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Signature dishes -->
+    <!-- ============ BRAND STATEMENT ============ -->
+    <section class="home-intro">
       <div class="wrap">
-        <div class="divider reveal" aria-hidden="true">
-          <svg viewBox="0 0 200 24" class="sprig"><path d="M100 2v20M100 8c-6-4-14-3-20 1M100 8c6-4 14-3 20 1M100 14c-5-3-12-2-17 1M100 14c5-3 12-2 17 1M100 20c-4-2-9-1-13 1M100 20c4-2 9-1 13 1" fill="none"/></svg>
-        </div>
-        <p class="eyebrow center reveal">Signature Bakes</p>
-        <h2 class="section-title center reveal">Made With Heart, Every Day</h2>
-        <div class="signature-grid">
-          <article class="sig-card reveal">
-            <h3>Zaatar Manakish</h3>
-            <p>Thin, oven-baked dough topped with a generous spread of za'atar, olive oil and sesame — light, aromatic and full of flavour.</p>
-          </article>
-          <article class="sig-card reveal">
-            <h3>Cheese Manakish</h3>
-            <p>Warm, melty and comforting, made with a blend of Middle Eastern cheeses over soft dough for the perfect salty-creamy balance.</p>
-          </article>
-          <article class="sig-card reveal">
-            <h3>Meat Manakish</h3>
-            <p>A savoury dough base topped with finely spiced minced meat, onions and herbs. A hearty favourite for lunch or dinner.</p>
-          </article>
-          <article class="sig-card reveal">
-            <h3>Spinach Fatayer</h3>
-            <p>Golden, triangle-shaped pastries filled with a tangy spinach mix, onions and lemon — baked until soft and flaky.</p>
-          </article>
-          <article class="sig-card reveal">
-            <h3>Saj Bread</h3>
-            <p>Thin, soft and slightly chewy, our saj dough is cooked fresh daily — perfect for wraps, dips or on its own.</p>
-          </article>
-        </div>
+        <p class="eyebrow center reveal">Our Story</p>
+        <h2 class="section-title center reveal">Made Fresh the <em>Royal</em> Way</h2>
+        <p class="lead reveal">At Royal Bake, we bring the rich flavours and timeless traditions of Middle Eastern baking straight to your table — hand-prepared daily with over 30 years of craft, heritage and heart.</p>
+        <div class="reveal"><a href="about.html" class="btn btn-ghost">Read Our Story</a></div>
       </div>
     </section>
 
-    <!-- ============ MENU ============ -->
-    <section class="menu-section" id="menu">
+    <!-- ============ FEATURED FAVOURITES ============ -->
+    <section class="favourites">
       <div class="wrap">
-        <p class="eyebrow center reveal">Our Menu</p>
+        <p class="eyebrow center reveal">Popular Favourites</p>
         <h2 class="section-title center reveal">Cravings Worth Coming Back For</h2>
-        <p class="menu-note center reveal">Crafted daily with quality ingredients. Prices may vary in store.</p>
-
-        <div class="menu-tabs reveal" id="menuTabs" role="tablist" aria-label="Menu categories"></div>
-        <div class="menu-grid" id="menuGrid" aria-live="polite"></div>
-      </div>
-    </section>
-
-    <!-- ============ ORDER ============ -->
-    <section class="order-section" id="order">
-      <div class="wrap">
-        <p class="eyebrow center reveal">Order Online</p>
-        <h2 class="section-title center reveal">Delivery &amp; Pickup, Made Easy</h2>
-        <p class="menu-note center reveal">Order Royal Bake for pickup or delivery through your favourite app — fresh from our oven, straight to your door.</p>
-
-        <!--
-          ========================= HOW TO GO LIVE =========================
-          Once you're approved as a merchant on each app, replace href="#"
-          with your real ordering link and REMOVE the  data-soon  attribute
-          from that <a> tag. That's it — the button becomes clickable.
-
-            Skip:      partners.skipthedishes.com   → your skipthedishes.com/... link
-            Uber Eats: merchants.ubereats.com       → your ubereats.com/... link
-            DoorDash:  get.doordash.com              → your doordash.com/... link
-          ==================================================================
-        -->
-        <div class="delivery-grid">
-
-          <a class="delivery-card reveal" data-app="skip" data-soon
-             href="#" target="_blank" rel="noopener" aria-label="Order on SkipTheDishes (coming soon)">
-            <span class="delivery-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" class="ic"><path d="M3 13l2-6h11l3 4h2v5h-2M3 13v3h2M3 13h13v3M9 19a2 2 0 11-4 0 2 2 0 014 0zM19 19a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-            </span>
-            <span class="delivery-app">SkipTheDishes</span>
-            <span class="delivery-desc">Delivery across Calgary</span>
-            <span class="delivery-cta">Order Now <em>→</em></span>
-          </a>
-
-          <a class="delivery-card reveal" data-app="uber" data-soon
-             href="#" target="_blank" rel="noopener" aria-label="Order on Uber Eats (coming soon)">
-            <span class="delivery-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" class="ic"><path d="M3 13l2-6h11l3 4h2v5h-2M3 13v3h2M3 13h13v3M9 19a2 2 0 11-4 0 2 2 0 014 0zM19 19a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-            </span>
-            <span class="delivery-app">Uber Eats</span>
-            <span class="delivery-desc">Fast delivery &amp; pickup</span>
-            <span class="delivery-cta">Order Now <em>→</em></span>
-          </a>
-
-          <a class="delivery-card reveal" data-app="doordash" data-soon
-             href="#" target="_blank" rel="noopener" aria-label="Order on DoorDash (coming soon)">
-            <span class="delivery-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" class="ic"><path d="M3 13l2-6h11l3 4h2v5h-2M3 13v3h2M3 13h13v3M9 19a2 2 0 11-4 0 2 2 0 014 0zM19 19a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-            </span>
-            <span class="delivery-app">DoorDash</span>
-            <span class="delivery-desc">Delivery to your door</span>
-            <span class="delivery-cta">Order Now <em>→</em></span>
-          </a>
-
-        </div>
-
-        <p class="delivery-foot center reveal">
-          Prefer to visit? We're open daily <strong>9 AM – 8 PM</strong> at
-          <a href="https://maps.google.com/?q=3334+32+St+NE,+Calgary,+AB+T1Y+6B9" target="_blank" rel="noopener">3334 32 St NE, Calgary</a>,
-          or call <a href="tel:4036804050">(403) 680&nbsp;4050</a>.
-        </p>
-      </div>
-    </section>
-
-    <!-- ============ CHEFS ============ -->
-    <section class="chefs">
-      <div class="wrap">
-        <p class="eyebrow center reveal">Meet the Chefs</p>
-        <h2 class="section-title center reveal">The Hands Behind the Oven</h2>
-        <div class="chef-grid">
-          <article class="chef-card reveal">
-            <div class="chef-photo arch" data-photo="chef-abu-abdo.jpg">
-              <img src="images/menu/chef-abu-abdo.jpg" alt="" onerror="this.remove()" />
-              <span class="arch-label">Add <code>chef-abu-abdo.jpg</code></span>
-            </div>
-            <h3>Chef Abu-Abdo</h3>
-            <p class="chef-role">Head Chef &amp; Founder · 30+ years</p>
-            <p>A seasoned master in the art of baking and gourmet food preparation. Known for his passion, precision and creativity, Abu-Abdo has led kitchens across more than three restaurants, trained aspiring chefs and blended traditional techniques with an innovative flair. A true craftsman devoted to the culinary arts.</p>
+        <div class="fav-grid">
+          <article class="fav-card reveal">
+            <div class="fav-thumb"><img src="images/menu/manakish-zaatar.png" alt="Zaatar Manakish" loading="lazy" /></div>
+            <h3>Zaatar Manakish</h3>
+            <span class="price">$3.99</span>
+            <p>Za'atar, olive oil and herbs on warm baked dough.</p>
           </article>
-          <article class="chef-card reveal">
-            <div class="chef-photo arch" data-photo="chef-abdul.jpg">
-              <img src="images/menu/chef-abdul.jpg" alt="" onerror="this.remove()" />
-              <span class="arch-label">Add <code>chef-abdul.jpg</code></span>
-            </div>
-            <h3>Chef Abdul</h3>
-            <p class="chef-role">Baker · 15+ years</p>
-            <p>The proud son of our head chef, Abdul grew up surrounded by the aromas of za'atar and fresh dough. He has mastered the craft over 15 years, blending authentic recipes with a modern touch while staying true to the traditions that define our bakery — bringing warmth and heart to every item for his fellow Calgarians.</p>
+          <article class="fav-card reveal">
+            <div class="fav-thumb"><img src="images/menu/appetizers-hummus.png" alt="Hummus" loading="lazy" /></div>
+            <h3>Hummus</h3>
+            <span class="price">$5.99</span>
+            <p>Creamy chickpeas, tahini, olive oil and lemon.</p>
+          </article>
+          <article class="fav-card reveal">
+            <div class="fav-thumb"><img src="images/menu/appetizers-fattoush-salad.png" alt="Fattoush Salad" loading="lazy" /></div>
+            <h3>Fattoush Salad</h3>
+            <span class="price">$5.99</span>
+            <p>Fresh vegetables tossed with crispy toasted pita.</p>
+          </article>
+          <article class="fav-card reveal">
+            <div class="fav-thumb"><img src="images/menu/appetizers-kibbeh.png" alt="Kibbeh" loading="lazy" /></div>
+            <h3>Kibbeh</h3>
+            <span class="price">$10.00</span>
+            <p>Crispy beef croquettes with herbs and spices.</p>
           </article>
         </div>
+        <div class="center reveal" style="margin-top:2.4rem"><a href="menu.html" class="btn btn-primary">See the Full Menu</a></div>
       </div>
     </section>
 
-    <!-- ============ CONTACT ============ -->
-    <section class="contact" id="contact">
-      <div class="wrap contact-grid">
-        <div class="contact-copy">
-          <p class="eyebrow reveal">Visit Us</p>
-          <h2 class="section-title reveal">Come Hungry,<br>Leave Happy</h2>
-          <p class="lead reveal">Good food doesn't just fill you up — it lifts your spirits and turns an ordinary day into something special. Drop by and taste the difference.</p>
-
-          <ul class="contact-list reveal">
-            <li>
-              <svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
-              <div><span>Location</span><a href="https://maps.google.com/?q=3334+32+St+NE,+Calgary,+AB+T1Y+6B9" target="_blank" rel="noopener">3334 32 St NE, Calgary, AB T1Y 6B9</a></div>
-            </li>
-            <li>
-              <svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-              <div><span>Hours</span><p>Open daily · 9:00 AM – 8:00 PM</p></div>
-            </li>
-            <li>
-              <svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><path d="M6.6 10.8a15.9 15.9 0 006.6 6.6l2.2-2.2a1 1 0 011-.24 11.4 11.4 0 003.6.58 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.4 11.4 0 00.58 3.6 1 1 0 01-.24 1z"/></svg>
-              <div><span>Phone</span><a href="tel:4036804050">(403) 680 4050</a></div>
-            </li>
-            <li>
-              <svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 5 8-5"/></svg>
-              <div><span>Email</span><a href="mailto:royalbake2025@gmail.com">royalbake2025@gmail.com</a></div>
-            </li>
-          </ul>
-
-          <div class="socials reveal">
-            <a href="https://www.instagram.com/royalbakeyyc/" class="social" target="_blank" rel="noopener" aria-label="Royal Bake on Instagram">
-              <svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
-            </a>
-            <a href="https://www.facebook.com/profile.php?id=61572416531773" class="social" target="_blank" rel="noopener" aria-label="Royal Bake on Facebook">
-              <svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><path d="M14 8.5V6.8c0-.8.4-1.3 1.4-1.3H17V2.6h-2.4C11.9 2.6 11 4.2 11 6.4v2.1H8.6V12H11v9h3v-9h2.2l.4-3.5z"/></svg>
-            </a>
-            <a href="https://wa.me/14036804050" class="social" target="_blank" rel="noopener" aria-label="Message Royal Bake on WhatsApp">
-              <svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><path d="M12 3a9 9 0 00-7.7 13.6L3 21l4.5-1.2A9 9 0 1012 3z"/><path d="M8.6 8.5c.2-.4.4-.4.6-.4h.4c.2 0 .4 0 .5.4l.6 1.4c.1.2 0 .3 0 .4l-.4.5c-.1.2-.2.3 0 .5a5.5 5.5 0 002.5 2.2c.3.1.4.1.5-.1l.5-.6c.2-.2.3-.1.5 0l1.3.7c.2.1.3.2.3.4"/></svg>
-            </a>
-          </div>
-        </div>
-
-        <div class="contact-side reveal">
-          <div class="map-frame">
-            <iframe
-              title="Royal Bake location map"
-              src="https://www.google.com/maps?q=3334%2032%20St%20NE%2C%20Calgary%2C%20AB%20T1Y%206B9&output=embed"
-              loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-          </div>
-          <form class="contact-form" id="contactForm" novalidate>
-            <h3>Send Us a Message</h3>
-            <div class="field">
-              <label for="cName">Name</label>
-              <input id="cName" name="name" type="text" autocomplete="name" required />
-            </div>
-            <div class="field">
-              <label for="cEmail">Email</label>
-              <input id="cEmail" name="email" type="email" autocomplete="email" required />
-            </div>
-            <div class="field">
-              <label for="cMsg">Message</label>
-              <textarea id="cMsg" name="message" rows="3" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary btn-block">Send Message</button>
-            <p class="form-status" id="contactStatus" role="status"></p>
-          </form>
+    <!-- ============ CATEGORY CARDS ============ -->
+    <section class="home-intro" style="padding-bottom:clamp(20px,4vw,40px)">
+      <div class="wrap">
+        <p class="eyebrow center reveal">Explore the Menu</p>
+        <h2 class="section-title center reveal">Something for Every Craving</h2>
+        <div class="cat-cards">
+          <a class="cat-card reveal" href="menu.html" style="--cat-img:url('https://images.pexels.com/photos/5191851/pexels-photo-5191851.jpeg?auto=compress&cs=tinysrgb&w=800')">
+            <h3>Breakfast</h3><span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </a>
+          <a class="cat-card reveal" href="menu.html" style="--cat-img:url('https://images.pexels.com/photos/7935287/pexels-photo-7935287.jpeg?auto=compress&cs=tinysrgb&w=800')">
+            <h3>Manakish</h3><span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </a>
+          <a class="cat-card reveal" href="menu.html" style="--cat-img:url('https://images.pexels.com/photos/8029196/pexels-photo-8029196.jpeg?auto=compress&cs=tinysrgb&w=800')">
+            <h3>BBQ &amp; Mains</h3><span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </a>
+          <a class="cat-card reveal" href="menu.html" style="--cat-img:url('https://images.pexels.com/photos/6889715/pexels-photo-6889715.jpeg?auto=compress&cs=tinysrgb&w=800')">
+            <h3>Mini Pies</h3><span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </a>
         </div>
       </div>
     </section>
+
+    <!-- ============ CLOSING CTA ============ -->
+    <section class="cta-band">
+      <div class="wrap">
+        <p class="eyebrow center reveal">Come Hungry, Leave Happy</p>
+        <h2 class="reveal">Fresh From Our Oven,<br>Straight to Your Table</h2>
+        <p class="reveal">Visit us daily 9 AM – 8 PM at 3334 32 St NE, Calgary — or order ahead for pickup.</p>
+        <div class="hero-cta reveal" style="justify-content:center">
+          <a href="menu.html" class="btn btn-primary">Order Online</a>
+          <a href="contact.html" class="btn btn-ghost">Find Us</a>
+        </div>
+      </div>
+    </section>
+
   </main>
 
-  <!-- ============ FOOTER ============ -->
-  <footer class="site-footer">
-    <div class="wrap footer-grid">
-      <div class="footer-brand">
-        <img src="images/logo.png" alt="Royal Bake" class="footer-logo" />
-        <p>Authentic Mediterranean baking, made fresh daily in Calgary. Come hungry, leave happy.</p>
-        <div class="footer-socials">
-          <a href="https://www.instagram.com/royalbakeyyc/" class="social" target="_blank" rel="noopener" aria-label="Royal Bake on Instagram">
-            <svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
-          </a>
-          <a href="https://www.facebook.com/profile.php?id=61572416531773" class="social" target="_blank" rel="noopener" aria-label="Royal Bake on Facebook">
-            <svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><path d="M14 8.5V6.8c0-.8.4-1.3 1.4-1.3H17V2.6h-2.4C11.9 2.6 11 4.2 11 6.4v2.1H8.6V12H11v9h3v-9h2.2l.4-3.5z"/></svg>
-          </a>
-          <a href="https://wa.me/14036804050" class="social" target="_blank" rel="noopener" aria-label="Message Royal Bake on WhatsApp">
-            <svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><path d="M12 3a9 9 0 00-7.7 13.6L3 21l4.5-1.2A9 9 0 1012 3z"/><path d="M8.6 8.5c.2-.4.4-.4.6-.4h.4c.2 0 .4 0 .5.4l.6 1.4c.1.2 0 .3 0 .4l-.4.5c-.1.2-.2.3 0 .5a5.5 5.5 0 002.5 2.2c.3.1.4.1.5-.1l.5-.6c.2-.2.3-.1.5 0l1.3.7c.2.1.3.2.3.4"/></svg>
-          </a>
-        </div>
-      </div>
-      <nav class="footer-nav" aria-label="Footer">
-        <h4>Explore</h4>
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#menu">Menu</a>
-        <a href="#order">Order</a>
-        <a href="#contact">Contact</a>
-      </nav>
-      <div class="footer-visit">
-        <h4>Visit</h4>
-        <p>3334 32 St NE<br>Calgary, AB T1Y 6B9</p>
-        <p>Open daily · 9 AM – 8 PM</p>
-        <a href="tel:4036804050">(403) 680 4050</a>
-      </div>
-    </div>
-    <div class="wrap footer-bottom">
-      <p>© <span id="year"></span> Royal Bake · Mediterranean Cuisine. All rights reserved.</p>
-    </div>
-  </footer>
-
-  <!-- ============ CART DRAWER ============ -->
-  <div class="overlay" id="overlay" hidden></div>
-
-  <aside class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-label="Your order" aria-hidden="true">
-    <div class="cart-head">
-      <h3>Your Order</h3>
-      <button class="icon-btn" id="cartClose" aria-label="Close order">
-        <svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
-    </div>
-    <div class="cart-body" id="cartBody"></div>
-    <div class="cart-foot" id="cartFoot">
-      <div class="cart-total"><span>Subtotal</span><strong id="cartSubtotal">$0.00</strong></div>
-      <p class="cart-fine">Taxes calculated at pickup. This starts your order — we'll confirm by phone.</p>
-      <button class="btn btn-primary btn-block" id="checkoutBtn" disabled>Checkout</button>
-    </div>
-  </aside>
-
-  <!-- ============ CHECKOUT MODAL ============ -->
-  <div class="modal" id="checkoutModal" role="dialog" aria-modal="true" aria-label="Checkout" aria-hidden="true">
-    <div class="modal-card">
-      <button class="icon-btn modal-close" id="checkoutClose" aria-label="Close checkout">
-        <svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
-
-      <!-- Step: details -->
-      <div class="checkout-step" id="checkoutForm">
-        <h3>Almost There</h3>
-        <p class="modal-sub">Choose how you'd like your order and add your details.</p>
-
-        <div class="seg" role="radiogroup" aria-label="Order type">
-          <button type="button" class="seg-btn is-active" data-type="Pickup" aria-pressed="true">Pickup</button>
-          <button type="button" class="seg-btn" data-type="In-Store" aria-pressed="false">In-Store</button>
-        </div>
-
-        <div class="field">
-          <label for="oName">Full name</label>
-          <input id="oName" type="text" autocomplete="name" required />
-        </div>
-        <div class="field">
-          <label for="oPhone">Phone</label>
-          <input id="oPhone" type="tel" autocomplete="tel" required />
-        </div>
-        <div class="field" id="timeField">
-          <label for="oTime">Preferred time</label>
-          <input id="oTime" type="text" placeholder="e.g. Today, 2:30 PM" />
-        </div>
-        <div class="field">
-          <label for="oNotes">Notes (optional)</label>
-          <textarea id="oNotes" rows="2" placeholder="Allergies, special requests…"></textarea>
-        </div>
-
-        <div class="checkout-summary" id="checkoutSummary"></div>
-
-        <button class="btn btn-primary btn-block" id="placeOrder">Place Order</button>
-        <p class="form-status" id="orderStatus" role="status"></p>
-      </div>
-
-      <!-- Step: confirmation -->
-      <div class="checkout-step" id="checkoutDone" hidden>
-        <div class="done-mark" aria-hidden="true">
-          <svg viewBox="0 0 52 52" class="ic"><circle cx="26" cy="26" r="24"/><path d="M15 27l8 8 15-16"/></svg>
-        </div>
-        <h3>Order Received!</h3>
-        <p class="modal-sub" id="doneMsg"></p>
-        <div class="done-actions">
-          <a href="tel:4036804050" class="btn btn-primary btn-block">Call to Confirm · (403) 680 4050</a>
-          <a href="#" class="btn btn-ghost btn-block" id="emailOrder">Email My Order</a>
-        </div>
-        <button class="link-btn" id="orderAgain">Start a new order</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="js/script.js"></script>
+  <script src="js/site.js"></script>
   <script src="js/animations.js"></script>
 </body>
 </html>

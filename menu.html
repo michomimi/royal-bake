@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menu — Royal Bake | Mediterranean Cuisine, Calgary</title>
+  <meta name="description" content="Browse the Royal Bake menu — manakish, mini pies, breakfast, appetizers, wraps, BBQ, bowls, family platters and drinks. Freshly baked daily in Calgary." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <link rel="icon" type="image/png" href="images/logo.png" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+</head>
+<body data-page="menu">
+  <main id="page">
+
+    <!-- ============ BANNER ============ -->
+    <section class="page-banner" style="--banner-img:url('https://images.pexels.com/photos/7935287/pexels-photo-7935287.jpeg?auto=compress&cs=tinysrgb&w=1600')">
+      <div class="wrap">
+        <p class="eyebrow reveal">Our Menu</p>
+        <h1 class="reveal">Cravings Worth <em>Coming Back</em> For</h1>
+        <p class="banner-sub reveal">Crafted daily with quality ingredients. Prices may vary in store.</p>
+        <nav class="crumbs reveal" aria-label="Breadcrumb"><a href="index.html">Home</a> / <span>Menu</span></nav>
+      </div>
+    </section>
+
+    <!-- ============ MENU ============ -->
+    <section class="menu-section" id="menu">
+      <div class="wrap">
+        <div class="menu-tabs reveal" id="menuTabs" role="tablist" aria-label="Menu categories"></div>
+        <div class="menu-grid" id="menuGrid" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ============ ORDER ============ -->
+    <section class="order-section" id="order">
+      <div class="wrap">
+        <p class="eyebrow center reveal">Order Online</p>
+        <h2 class="section-title center reveal">Delivery &amp; Pickup, Made Easy</h2>
+        <p class="menu-note center reveal">Order Royal Bake for pickup or delivery through your favourite app — fresh from our oven, straight to your door.</p>
+
+        <!--
+          ========================= HOW TO GO LIVE =========================
+          Once you're approved as a merchant on each app, replace href="#"
+          with your real ordering link and REMOVE the  data-soon  attribute.
+          ==================================================================
+        -->
+        <div class="delivery-grid">
+          <a class="delivery-card reveal" data-app="skip" data-soon href="#" target="_blank" rel="noopener" aria-label="Order on SkipTheDishes (coming soon)">
+            <span class="delivery-logo" aria-hidden="true"><svg viewBox="0 0 24 24" class="ic"><path d="M3 13l2-6h11l3 4h2v5h-2M3 13v3h2M3 13h13v3M9 19a2 2 0 11-4 0 2 2 0 014 0zM19 19a2 2 0 11-4 0 2 2 0 014 0z"/></svg></span>
+            <span class="delivery-app">SkipTheDishes</span>
+            <span class="delivery-desc">Delivery across Calgary</span>
+            <span class="delivery-cta">Order Now <em>→</em></span>
+          </a>
+          <a class="delivery-card reveal" data-app="uber" data-soon href="#" target="_blank" rel="noopener" aria-label="Order on Uber Eats (coming soon)">
+            <span class="delivery-logo" aria-hidden="true"><svg viewBox="0 0 24 24" class="ic"><path d="M3 13l2-6h11l3 4h2v5h-2M3 13v3h2M3 13h13v3M9 19a2 2 0 11-4 0 2 2 0 014 0zM19 19a2 2 0 11-4 0 2 2 0 014 0z"/></svg></span>
+            <span class="delivery-app">Uber Eats</span>
+            <span class="delivery-desc">Fast delivery &amp; pickup</span>
+            <span class="delivery-cta">Order Now <em>→</em></span>
+          </a>
+          <a class="delivery-card reveal" data-app="doordash" data-soon href="#" target="_blank" rel="noopener" aria-label="Order on DoorDash (coming soon)">
+            <span class="delivery-logo" aria-hidden="true"><svg viewBox="0 0 24 24" class="ic"><path d="M3 13l2-6h11l3 4h2v5h-2M3 13v3h2M3 13h13v3M9 19a2 2 0 11-4 0 2 2 0 014 0zM19 19a2 2 0 11-4 0 2 2 0 014 0z"/></svg></span>
+            <span class="delivery-app">DoorDash</span>
+            <span class="delivery-desc">Delivery to your door</span>
+            <span class="delivery-cta">Order Now <em>→</em></span>
+          </a>
+        </div>
+
+        <p class="delivery-foot center reveal">
+          Prefer to visit? We're open daily <strong>9 AM – 8 PM</strong> at
+          <a href="https://maps.google.com/?q=3334+32+St+NE,+Calgary,+AB+T1Y+6B9" target="_blank" rel="noopener">3334 32 St NE, Calgary</a>,
+          or call <a href="tel:4036804050">(403) 680&nbsp;4050</a>.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/site.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/animations.js"></script>
+</body>
+</html>

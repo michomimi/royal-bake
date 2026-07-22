@@ -324,6 +324,21 @@
 }
 
 /* ---------------------------------------------------------------------
+   16. PAGE TRANSITIONS — content fades up on load, fades out on exit
+   (header/footer are outside #page, so only the content transitions)
+   --------------------------------------------------------------------- */
+.js-anim #page{ animation:pageIn .6s var(--ease) both; }
+@keyframes pageIn{
+  from{ opacity:0; transform:translate3d(0, 16px, 0); }
+  to  { opacity:1; transform:none; }
+}
+.js-anim.page-leaving #page{
+  opacity:0; transform:translate3d(0, -10px, 0);
+  transition:opacity .26s var(--ease), transform .26s var(--ease);
+  animation:none;
+}
+
+/* ---------------------------------------------------------------------
    REDUCED MOTION — turn the whole layer off gracefully
    --------------------------------------------------------------------- */
 @media (prefers-reduced-motion:reduce){
@@ -342,6 +357,7 @@
   .js-anim .tilt{ transform:none !important; }
   .js-anim .tilt::after{ display:none !important; }
   .js-anim .magnetic{ transform:none !important; }
+  .js-anim #page{ animation:none !important; }
   .scroll-progress{ display:none; }
   .js-anim .section-title.center::after{ transition:none; }
 }

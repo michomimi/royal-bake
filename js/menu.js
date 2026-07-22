@@ -1,25 +1,10 @@
 /* =====================================================================
-   ROYAL BAKE — script.js
-   Menu data + rendering, cart, checkout, nav, scroll reveal.
-   No backend: "Place Order" collects the order and hands it off via
-   phone / a pre-filled email. Wire CONFIG.orderEmail (or an API call
-   inside placeOrder) when you're ready to take orders automatically.
+   ROYAL BAKE — menu.js
+   Menu data + tab/grid rendering for the Menu page. Loads only where
+   #menuGrid exists. Relies on helpers ($, $$, money, esc, addToCart)
+   from site.js, which loads first.
    ===================================================================== */
 
-const CONFIG = {
-  restaurant: "Royal Bake",
-  phone: "(403) 680 4050",
-  orderEmail: "royalbake2025@gmail.com", // change to order@royalbake.ca once set up
-  currency: "$",
-};
-
-/* ---------------------------------------------------------------------
-   MENU DATA
-   Descriptions & Arabic names sourced from royalbake.ca; Wraps + Bowls
-   added from the in-store menu spreadsheet. Prices may change in store.
-   Each item: { name, ar, desc, options:[{ size, price }] }
-   - size "" renders as a plain "＋ $price" button
-   --------------------------------------------------------------------- */
 const MENU = [
   {
     id: "breakfast", label: "Breakfast", ar: "فطور",
@@ -174,430 +159,102 @@ const MENU = [
       { name: "Tea Pot", ar: "إبريق شاي", desc: "Freshly brewed pot of tea served hot with rich aroma.", options: [{ size: "", price: 5.99 }] },
     ],
   },
-  {
-    id: "sweets", label: "Sweets", ar: "حلويات",
-    soon: true,
-    items: [],
-  },
+  { id: "sweets", label: "Sweets", ar: "حلويات", soon: true, items: [] },
 ];
 
 /* ---------------------------------------------------------------------
-   HELPERS
-   --------------------------------------------------------------------- */
-const $ = (sel, ctx = document) => ctx.querySelector(sel);
-const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
-const money = (n) => CONFIG.currency + n.toFixed(2);
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-
-/* ---------------------------------------------------------------------
-   DISH PHOTOS
-   Real Royal Bake product photos, downloaded from royalbake.ca into
-   images/menu/ and named  <category>-<dish-slug>.png. Wraps, Bowls and
-   the house Special weren't on the old menu, so they fall back to a
-   representative stock photo — swap those for your own any time.
+   DISH PHOTOS — real Royal Bake artwork in images/menu/<cat>-<slug>.png.
+   Wraps, Bowls and the house Special weren't on the old menu → stock.
    --------------------------------------------------------------------- */
 const PX = (id) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=400`;
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-
-// Categories that have real photos on disk.
 const PHOTO_CATS = ["breakfast", "appetizers", "manakish", "mini-pies", "bbq", "platters", "drinks"];
 
 function dishImage(name, cat) {
   if (PHOTO_CATS.includes(cat) && !(cat === "manakish" && /special/i.test(name))) {
     return `images/menu/${cat}-${slugify(name)}.png`;
   }
-  // Not on the old menu → representative stock photo.
   if (cat === "bowls") return PX(5083910);
   if (cat === "wraps") return /falafel/i.test(name) ? PX(4722522) : PX(5779364);
   return PX(34349100); // Royal Bake Special
 }
 
 /* ---------------------------------------------------------------------
-   RENDER MENU (tabs + grid)
+   RENDER (only on the Menu page)
    --------------------------------------------------------------------- */
-const tabsEl = $("#menuTabs");
-const gridEl = $("#menuGrid");
-let activeCat = MENU[0].id;
+(function menuPage() {
+  const tabsEl = $("#menuTabs");
+  const gridEl = $("#menuGrid");
+  if (!tabsEl || !gridEl) return;
 
-function renderTabs() {
-  tabsEl.innerHTML = MENU.map(
-    (c) => `<button class="tab${c.id === activeCat ? " is-active" : ""}" role="tab" data-cat="${c.id}" aria-selected="${c.id === activeCat}">
-      ${esc(c.label)}${c.ar ? `<span class="ar" dir="rtl">${esc(c.ar)}</span>` : ""}
-    </button>`
-  ).join("");
-}
+  let activeCat = MENU[0].id;
 
-function renderGrid() {
-  const cat = MENU.find((c) => c.id === activeCat);
-  if (!cat) return;
-
-  if (cat.soon || !cat.items.length) {
-    gridEl.innerHTML = `<div class="menu-soon">
-      <h3>Coming Soon</h3>
-      <p>Our ${esc(cat.label.toLowerCase())} selection is on the way — freshly baked and worth the wait.</p>
-    </div>`;
-    return;
+  function renderTabs() {
+    tabsEl.innerHTML = MENU.map(
+      (c) => `<button class="tab${c.id === activeCat ? " is-active" : ""}" role="tab" data-cat="${c.id}" aria-selected="${c.id === activeCat}">
+        ${esc(c.label)}${c.ar ? `<span class="ar" dir="rtl">${esc(c.ar)}</span>` : ""}
+      </button>`
+    ).join("");
   }
 
-  const note = cat.note ? `<p class="menu-note center" style="grid-column:1/-1;margin:-1rem 0 1rem">${esc(cat.note)}</p>` : "";
+  function renderGrid() {
+    const cat = MENU.find((c) => c.id === activeCat);
+    if (!cat) return;
 
-  const cards = cat.items.map((item, i) => {
-    const opts = item.options.map((o) => {
-      const label = o.size ? `<span class="sz">${esc(o.size)}</span> ` : "";
-      return `<button class="add-chip" data-name="${esc(item.name)}" data-size="${esc(o.size)}" data-price="${o.price}">
-        <span class="plus">＋</span>${label}${money(o.price)}
-      </button>`;
-    }).join("");
-
-    const img = item.img || dishImage(item.name, cat.id);
-
-    return `<article class="dish reveal" style="--d:${(i % 4) * 60}ms">
-      <div class="dish-thumb">
-        <img src="${esc(img)}" alt="${esc(item.name)}" loading="lazy" decoding="async"
-             onerror="this.closest('.dish-thumb').classList.add('no-img'); this.remove();" />
-      </div>
-      <div class="dish-body">
-        <div class="dish-head">
-          <h3 class="dish-name">${esc(item.name)}</h3>
-          ${item.ar ? `<span class="dish-ar" dir="rtl">${esc(item.ar)}</span>` : ""}
-        </div>
-        <p class="dish-desc">${esc(item.desc)}</p>
-        <div class="dish-options">${opts}</div>
-      </div>
-    </article>`;
-  }).join("");
-
-  gridEl.innerHTML = note + cards;
-  observeReveals(gridEl);
-}
-
-tabsEl.addEventListener("click", (e) => {
-  const btn = e.target.closest(".tab");
-  if (!btn) return;
-  activeCat = btn.dataset.cat;
-  renderTabs();
-  renderGrid();
-});
-
-gridEl.addEventListener("click", (e) => {
-  const chip = e.target.closest(".add-chip");
-  if (!chip) return;
-  addToCart(chip.dataset.name, chip.dataset.size, parseFloat(chip.dataset.price));
-  chip.classList.remove("pulse"); void chip.offsetWidth; chip.classList.add("pulse");
-});
-
-/* ---------------------------------------------------------------------
-   CART
-   --------------------------------------------------------------------- */
-let cart = []; // { name, size, price, qty }
-const cartCountEl = $("#cartCount");
-const cartBodyEl = $("#cartBody");
-const cartSubtotalEl = $("#cartSubtotal");
-const checkoutBtn = $("#checkoutBtn");
-
-const cartKey = (name, size) => name + "||" + size;
-
-function addToCart(name, size, price) {
-  const key = cartKey(name, size);
-  const found = cart.find((l) => cartKey(l.name, l.size) === key);
-  if (found) found.qty++;
-  else cart.push({ name, size, price, qty: 1 });
-  renderCart();
-  bumpCart();
-  toast(`Added ${name}${size ? " · " + size : ""}`);
-}
-
-function changeQty(key, delta) {
-  const line = cart.find((l) => cartKey(l.name, l.size) === key);
-  if (!line) return;
-  line.qty += delta;
-  if (line.qty <= 0) cart = cart.filter((l) => cartKey(l.name, l.size) !== key);
-  renderCart();
-}
-
-const removeLine = (key) => { cart = cart.filter((l) => cartKey(l.name, l.size) !== key); renderCart(); };
-const cartSubtotal = () => cart.reduce((s, l) => s + l.price * l.qty, 0);
-const cartQty = () => cart.reduce((s, l) => s + l.qty, 0);
-
-function renderCart() {
-  const qty = cartQty();
-  cartCountEl.textContent = qty;
-  cartCountEl.dataset.empty = qty === 0 ? "true" : "false";
-
-  if (!cart.length) {
-    cartBodyEl.innerHTML = `<div class="cart-empty">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h12l-1 12.2a1.8 1.8 0 01-1.8 1.6H8.8A1.8 1.8 0 017 19.2L6 7z"/><path d="M9 9V6.5a3 3 0 016 0V9"/></svg>
-      <p>Your order is empty.<br>Add something delicious from the menu.</p>
-    </div>`;
-    checkoutBtn.disabled = true;
-  } else {
-    cartBodyEl.innerHTML = cart.map((l) => {
-      const key = cartKey(l.name, l.size);
-      return `<div class="cart-item">
-        <div class="cart-item-main">
-          <div class="cart-item-name">${esc(l.name)}</div>
-          ${l.size ? `<div class="cart-item-sz">${esc(l.size)}</div>` : ""}
-          <div class="cart-item-price">${money(l.price * l.qty)}</div>
-          <div class="qty">
-            <button data-key="${esc(key)}" data-act="dec" aria-label="Decrease quantity">–</button>
-            <span>${l.qty}</span>
-            <button data-key="${esc(key)}" data-act="inc" aria-label="Increase quantity">+</button>
-          </div>
-        </div>
-        <button class="cart-item-remove" data-key="${esc(key)}" data-act="rm">Remove</button>
+    if (cat.soon || !cat.items.length) {
+      gridEl.innerHTML = `<div class="menu-soon">
+        <h3>Coming Soon</h3>
+        <p>Our ${esc(cat.label.toLowerCase())} selection is on the way — freshly baked and worth the wait.</p>
       </div>`;
-    }).join("");
-    checkoutBtn.disabled = false;
-  }
-  cartSubtotalEl.textContent = money(cartSubtotal());
-}
-
-cartBodyEl.addEventListener("click", (e) => {
-  const btn = e.target.closest("[data-act]");
-  if (!btn) return;
-  const { key, act } = btn.dataset;
-  if (act === "inc") changeQty(key, 1);
-  else if (act === "dec") changeQty(key, -1);
-  else if (act === "rm") removeLine(key);
-});
-
-function bumpCart() {
-  $("#cartBtn").animate(
-    [{ transform: "scale(1)" }, { transform: "scale(1.18)" }, { transform: "scale(1)" }],
-    { duration: 320, easing: "cubic-bezier(.22,.61,.36,1)" }
-  );
-}
-
-/* ---------------------------------------------------------------------
-   DRAWER + OVERLAY
-   --------------------------------------------------------------------- */
-const overlay = $("#overlay");
-const drawer = $("#cartDrawer");
-
-function openDrawer() { drawer.classList.add("open"); drawer.setAttribute("aria-hidden", "false"); showOverlay(); }
-function closeDrawer() { drawer.classList.remove("open"); drawer.setAttribute("aria-hidden", "true"); maybeHideOverlay(); }
-function showOverlay() { overlay.hidden = false; requestAnimationFrame(() => overlay.classList.add("show")); }
-function maybeHideOverlay() {
-  if (drawer.classList.contains("open") || $("#checkoutModal").classList.contains("open")) return;
-  overlay.classList.remove("show");
-  setTimeout(() => { if (!overlay.classList.contains("show")) overlay.hidden = true; }, 300);
-}
-
-$("#cartBtn").addEventListener("click", openDrawer);
-$("#cartClose").addEventListener("click", closeDrawer);
-overlay.addEventListener("click", () => { closeDrawer(); closeModal(); });
-
-/* ---------------------------------------------------------------------
-   CHECKOUT MODAL
-   --------------------------------------------------------------------- */
-const modal = $("#checkoutModal");
-const formStep = $("#checkoutForm");
-const doneStep = $("#checkoutDone");
-let orderType = "Pickup";
-
-function renderCheckoutSummary() {
-  const rows = cart.map((l) =>
-    `<div class="row"><span>${l.qty}× ${esc(l.name)}${l.size ? " (" + esc(l.size) + ")" : ""}</span><span>${money(l.price * l.qty)}</span></div>`
-  ).join("");
-  $("#checkoutSummary").innerHTML = rows + `<div class="row total"><span>Subtotal</span><span>${money(cartSubtotal())}</span></div>`;
-}
-
-function openModal() {
-  if (!cart.length) return;
-  renderCheckoutSummary();
-  formStep.hidden = false;
-  doneStep.hidden = true;
-  $("#orderStatus").textContent = "";
-  modal.classList.add("open");
-  modal.setAttribute("aria-hidden", "false");
-  showOverlay();
-  setTimeout(() => $("#oName").focus(), 350);
-}
-function closeModal() { modal.classList.remove("open"); modal.setAttribute("aria-hidden", "true"); maybeHideOverlay(); }
-
-$("#checkoutBtn").addEventListener("click", () => { closeDrawer(); openModal(); });
-$("#checkoutClose").addEventListener("click", closeModal);
-
-$$(".seg-btn").forEach((b) =>
-  b.addEventListener("click", () => {
-    $$(".seg-btn").forEach((x) => { x.classList.remove("is-active"); x.setAttribute("aria-pressed", "false"); });
-    b.classList.add("is-active");
-    b.setAttribute("aria-pressed", "true");
-    orderType = b.dataset.type;
-  })
-);
-
-function buildOrderText() {
-  const name = $("#oName").value.trim();
-  const phone = $("#oPhone").value.trim();
-  const time = $("#oTime").value.trim();
-  const notes = $("#oNotes").value.trim();
-  const L = [];
-  L.push(`New ${orderType} order — ${CONFIG.restaurant}`);
-  L.push("");
-  L.push(`Name: ${name}`);
-  L.push(`Phone: ${phone}`);
-  if (time) L.push(`Preferred time: ${time}`);
-  L.push("");
-  L.push("Order:");
-  cart.forEach((l) => L.push(`• ${l.qty}x ${l.name}${l.size ? " (" + l.size + ")" : ""} — ${money(l.price * l.qty)}`));
-  L.push("");
-  L.push(`Subtotal: ${money(cartSubtotal())} (taxes calculated in store)`);
-  if (notes) { L.push(""); L.push(`Notes: ${notes}`); }
-  return L.join("\n");
-}
-
-$("#placeOrder").addEventListener("click", () => {
-  const nameInp = $("#oName");
-  const phoneInp = $("#oPhone");
-  let ok = true;
-  [nameInp, phoneInp].forEach((inp) => {
-    const field = inp.closest(".field");
-    if (!inp.value.trim()) { field.classList.add("invalid"); ok = false; }
-    else field.classList.remove("invalid");
-  });
-  const status = $("#orderStatus");
-  if (!ok) { status.textContent = "Please add your name and phone number."; status.classList.add("err"); return; }
-  status.textContent = ""; status.classList.remove("err");
-
-  const subject = `${orderType} order — ${CONFIG.restaurant}`;
-  const mailto = `mailto:${CONFIG.orderEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(buildOrderText())}`;
-  $("#emailOrder").setAttribute("href", mailto);
-
-  $("#doneMsg").innerHTML = `Thanks, <strong>${esc(nameInp.value.trim())}</strong>! We've noted your <strong>${orderType}</strong> order.<br>Online ordering isn't fully live yet — please call to confirm, or email your order below and we'll have it ready.`;
-  formStep.hidden = true;
-  doneStep.hidden = false;
-});
-
-$("#orderAgain").addEventListener("click", () => { cart = []; renderCart(); closeModal(); });
-
-/* ---------------------------------------------------------------------
-   CONTACT FORM (mailto — no backend)
-   --------------------------------------------------------------------- */
-$("#contactForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const name = $("#cName"), email = $("#cEmail"), msg = $("#cMsg");
-  let ok = true;
-  [name, email, msg].forEach((inp) => {
-    const field = inp.closest(".field");
-    const bad = !inp.value.trim() || (inp.type === "email" && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(inp.value.trim()));
-    field.classList.toggle("invalid", bad);
-    if (bad) ok = false;
-  });
-  const status = $("#contactStatus");
-  if (!ok) { status.textContent = "Please fill in every field with a valid email."; status.classList.add("err"); return; }
-  const body = `From: ${name.value.trim()} <${email.value.trim()}>\n\n${msg.value.trim()}`;
-  const mailto = `mailto:${CONFIG.orderEmail}?subject=${encodeURIComponent("Website message from " + name.value.trim())}&body=${encodeURIComponent(body)}`;
-  status.classList.remove("err");
-  status.textContent = "Opening your email app to send…";
-  window.location.href = mailto;
-  e.target.reset();
-});
-
-/* ---------------------------------------------------------------------
-   NAV: hamburger, close-on-click, header shadow on scroll
-   --------------------------------------------------------------------- */
-const hamburger = $("#hamburger");
-const nav = $("#primaryNav");
-hamburger.addEventListener("click", () => {
-  const open = nav.classList.toggle("open");
-  hamburger.setAttribute("aria-expanded", open ? "true" : "false");
-});
-$$(".nav-link").forEach((a) => a.addEventListener("click", () => {
-  nav.classList.remove("open");
-  hamburger.setAttribute("aria-expanded", "false");
-}));
-
-/* ---------------------------------------------------------------------
-   SMOOTH ANCHOR SCROLL  (eased, longer glide than the native jump)
-   --------------------------------------------------------------------- */
-const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-
-function smoothScrollTo(target) {
-  const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--header-h"), 10) || 72;
-  const startY = window.scrollY;
-  const destY = Math.max(0, target.getBoundingClientRect().top + startY - headerH);
-  const distance = destY - startY;
-  if (Math.abs(distance) < 4) return;
-
-  // Duration scales with distance so short hops are quick and long ones glide.
-  const duration = Math.min(1200, Math.max(500, Math.abs(distance) * 0.6));
-  const html = document.documentElement;
-  const prevBehavior = html.style.scrollBehavior;
-  html.style.scrollBehavior = "auto"; // stop CSS smooth from fighting our animation
-
-  let start = null;
-  function step(now) {
-    if (start === null) start = now;
-    const t = Math.min(1, (now - start) / duration);
-    window.scrollTo(0, startY + distance * easeInOutCubic(t));
-    if (t < 1) {
-      requestAnimationFrame(step);
-    } else {
-      html.style.scrollBehavior = prevBehavior;
+      return;
     }
-  }
-  requestAnimationFrame(step);
-}
 
-$$('a[href^="#"]').forEach((a) => {
-  a.addEventListener("click", (e) => {
-    const id = a.getAttribute("href");
-    if (id === "#") { e.preventDefault(); return; } // inert placeholder links (e.g. "coming soon")
-    if (!id || id.length < 2) return;
-    const target = document.querySelector(id);
-    if (!target || prefersReducedMotion) return; // let the browser handle it
-    e.preventDefault();
-    smoothScrollTo(target);
-    history.pushState(null, "", id);             // keep the URL hash in sync
+    const note = cat.note ? `<p class="menu-note center" style="grid-column:1/-1;margin:-1rem 0 1rem">${esc(cat.note)}</p>` : "";
+
+    const cards = cat.items.map((item, i) => {
+      const opts = item.options.map((o) => {
+        const label = o.size ? `<span class="sz">${esc(o.size)}</span> ` : "";
+        return `<button class="add-chip" data-name="${esc(item.name)}" data-size="${esc(o.size)}" data-price="${o.price}">
+          <span class="plus">＋</span>${label}${money(o.price)}
+        </button>`;
+      }).join("");
+
+      const img = item.img || dishImage(item.name, cat.id);
+
+      return `<article class="dish reveal" style="--d:${(i % 4) * 60}ms">
+        <div class="dish-thumb">
+          <img src="${esc(img)}" alt="${esc(item.name)}" loading="lazy" decoding="async"
+               onerror="this.closest('.dish-thumb').classList.add('no-img'); this.remove();" />
+        </div>
+        <div class="dish-body">
+          <div class="dish-head">
+            <h3 class="dish-name">${esc(item.name)}</h3>
+            ${item.ar ? `<span class="dish-ar" dir="rtl">${esc(item.ar)}</span>` : ""}
+          </div>
+          <p class="dish-desc">${esc(item.desc)}</p>
+          <div class="dish-options">${opts}</div>
+        </div>
+      </article>`;
+    }).join("");
+
+    gridEl.innerHTML = note + cards;
+  }
+
+  tabsEl.addEventListener("click", (e) => {
+    const btn = e.target.closest(".tab");
+    if (!btn) return;
+    activeCat = btn.dataset.cat;
+    renderTabs();
+    renderGrid();
   });
-});
 
-const header = $("#siteHeader");
-const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 20);
-window.addEventListener("scroll", onScroll, { passive: true });
+  gridEl.addEventListener("click", (e) => {
+    const chip = e.target.closest(".add-chip");
+    if (!chip) return;
+    addToCart(chip.dataset.name, chip.dataset.size, parseFloat(chip.dataset.price));
+    chip.classList.remove("pulse"); void chip.offsetWidth; chip.classList.add("pulse");
+  });
 
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") { closeDrawer(); closeModal(); } });
-
-/* ---------------------------------------------------------------------
-   SCROLL REVEAL
-   --------------------------------------------------------------------- */
-let revealObserver;
-function observeReveals(ctx = document) {
-  if (!("IntersectionObserver" in window)) { $$(".reveal", ctx).forEach((el) => el.classList.add("in")); return; }
-  if (!revealObserver) {
-    revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) { entry.target.classList.add("in"); revealObserver.unobserve(entry.target); }
-      });
-    }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
-  }
-  $$(".reveal", ctx).forEach((el) => { if (!el.classList.contains("in")) revealObserver.observe(el); });
-}
-
-/* ---------------------------------------------------------------------
-   TOAST
-   --------------------------------------------------------------------- */
-let toastTimer;
-function toast(message) {
-  let t = $("#toast");
-  if (!t) { t = document.createElement("div"); t.id = "toast"; t.className = "toast"; document.body.appendChild(t); }
-  t.textContent = message;
-  t.classList.add("show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("show"), 1800);
-}
-
-/* ---------------------------------------------------------------------
-   INIT
-   --------------------------------------------------------------------- */
-(function init() {
   renderTabs();
   renderGrid();
-  renderCart();
-  observeReveals(document);
-  onScroll();
-  const yearEl = $("#year");
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
 })();

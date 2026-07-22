@@ -376,50 +376,33 @@
   })();
 
   /* =================================================================
-     5. SCROLL-SPY NAV — sliding indicator + active link
+     5. PAGE TRANSITIONS — fade the page in on load, and fade out
+     before navigating to another page in this site (multi-page feel).
      ================================================================= */
-  (function scrollSpy() {
-    const nav = $("#primaryNav");
-    if (!nav) return;
-    const links = $$(".nav-link", nav);
-    const ind = document.createElement("span");
-    ind.className = "nav-ind";
-    nav.appendChild(ind);
+  (function pageTransition() {
+    // Enter animation: pure CSS keyframe under .js-anim (see animations.css).
+    // Nothing to do here for the entrance beyond the class already set.
 
-    const sections = links
-      .map((l) => {
-        const id = l.getAttribute("href");
-        return id && id.startsWith("#") ? { link: l, sec: $(id) } : null;
-      })
-      .filter((x) => x && x.sec);
+    if (reduce) return;
 
-    let current = null;
-    function moveTo(link) {
-      if (!link) { ind.style.opacity = "0"; return; }
-      ind.style.opacity = "1";
-      ind.style.width = link.offsetWidth + "px";
-      ind.style.transform = `translateX(${link.offsetLeft}px)`;
-    }
-    function setCurrent(link) {
-      if (link === current) return;
-      current = link;
-      links.forEach((l) => l.classList.toggle("is-current", l === link));
-      if (window.innerWidth > 900) moveTo(link);
-    }
-
-    const io = new IntersectionObserver((entries) => {
-      // Choose the section most in view.
-      entries.forEach((e) => { e.target.__ratio = e.isIntersecting ? e.intersectionRatio : 0; });
-      let best = null, bestR = 0;
-      sections.forEach(({ sec, link }) => {
-        const r = sec.__ratio || 0;
-        if (r > bestR) { bestR = r; best = link; }
-      });
-      if (best) setCurrent(best);
-    }, { threshold: [0.15, 0.4, 0.7], rootMargin: `-${root.style.getPropertyValue("--header-h") || "76px"} 0px -40% 0px` });
-
-    sections.forEach(({ sec }) => io.observe(sec));
-    window.addEventListener("resize", () => { if (window.innerWidth > 900) moveTo(current); }, { passive: true });
+    // Exit animation: intercept same-site page links and fade out first.
+    const isInternalPage = (a) => {
+      const href = a.getAttribute("href") || "";
+      return /^[\w-]+\.html(\?.*)?(#.*)?$/.test(href) && a.target !== "_blank";
+    };
+    document.addEventListener("click", (e) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = e.target.closest("a");
+      if (!a || !isInternalPage(a)) return;
+      const href = a.getAttribute("href");
+      // Don't animate a link to the page we're already on.
+      if (href.split(/[?#]/)[0] === location.pathname.split("/").pop()) return;
+      e.preventDefault();
+      root.classList.add("page-leaving");
+      setTimeout(() => { window.location.href = href; }, 260);
+    });
+    // If restored from bfcache, clear the leaving state.
+    window.addEventListener("pageshow", () => root.classList.remove("page-leaving"));
   })();
 
   if (reduce) return; // everything below is pure motion flourish
