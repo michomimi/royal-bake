@@ -166,7 +166,7 @@ const MENU = [
    DISH PHOTOS — real Royal Bake artwork in images/menu/<cat>-<slug>.png.
    Wraps, Bowls and the house Special weren't on the old menu → stock.
    --------------------------------------------------------------------- */
-const PX = (id) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=400`;
+const PX = (id) => `images/photos/p-${id}.jpg`;   // self-hosted (was Pexels hotlink)
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const PHOTO_CATS = ["breakfast", "appetizers", "manakish", "mini-pies", "bbq", "platters", "drinks"];
 

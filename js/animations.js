@@ -35,13 +35,13 @@
     // to use). ?w= keeps them sharp but reasonably sized. To use your own
     // photos, just replace these strings with e.g. "images/menu/bg-1.jpg".
     const SLIDES = [
-      "https://images.pexels.com/photos/27359350/pexels-photo-27359350.jpeg", // hand pulling manoushe
-      "https://images.pexels.com/photos/28104857/pexels-photo-28104857.jpeg", // flatbread w/ herbs & lemon
-      "https://images.pexels.com/photos/5191851/pexels-photo-5191851.jpeg",  // breakfast mezze spread
-      "https://images.pexels.com/photos/8029196/pexels-photo-8029196.jpeg",  // charcoal grill / BBQ
-      "https://images.pexels.com/photos/34349100/pexels-photo-34349100.jpeg", // za'atar baked buns
-      "https://images.pexels.com/photos/6419394/pexels-photo-6419394.jpeg",  // mezze dips with pita
-    ].map((u) => (u.startsWith("http") ? u + "?auto=compress&cs=tinysrgb&w=1600" : u));
+      "images/photos/p-27359350.jpg", // hand pulling manoushe
+      "images/photos/p-28104857.jpg", // flatbread w/ herbs & lemon
+      "images/photos/p-5191851.jpg",  // breakfast mezze spread
+      "images/photos/p-8029196.jpg",  // charcoal grill / BBQ
+      "images/photos/p-34349100.jpg", // za'atar baked buns
+      "images/photos/p-6419394.jpg",  // mezze dips with pita
+    ];
 
     // Build slideshow + scrim, insert behind the existing hero content.
     const show = document.createElement("div");
