@@ -150,8 +150,8 @@ const MENU = [
   {
     id: "drinks", label: "Drinks", ar: "مشروبات",
     items: [
-      { name: "Water", ar: "مياه", desc: "Refreshing bottled water served chilled.", options: [{ size: "", price: 1.99 }] },
-      { name: "Pop", ar: "غازيات", desc: "Assorted soft drinks served cold and refreshing.", options: [{ size: "", price: 1.99 }] },
+      { name: "Water", ar: "مياه", desc: "Refreshing bottled water served chilled.", options: [{ size: "", price: 1.99 }], img: "images/menu/drink-water.jpg", photo: true },
+      { name: "Pop", ar: "غازيات", desc: "Assorted soft drinks served cold and refreshing.", options: [{ size: "", price: 1.99 }], img: "images/menu/drink-pop.jpg", photo: true },
       { name: "Juice", ar: "عصير", desc: "Refreshing fruit juice served cold with a naturally sweet flavour.", options: [{ size: "", price: 2.99 }] },
       { name: "Ayran", ar: "عيران", desc: "Traditional yogurt drink served cold, smooth and refreshing.", options: [{ size: "", price: 2.99 }] },
       { name: "Redbull", ar: "ريدبول", desc: "Energy drink served chilled for a refreshing boost.", options: [{ size: "", price: 2.99 }] },
@@ -222,7 +222,7 @@ function dishImage(name, cat) {
       const img = item.img || dishImage(item.name, cat.id);
 
       return `<article class="dish reveal" style="--d:${(i % 4) * 60}ms">
-        <div class="dish-thumb">
+        <div class="dish-thumb${item.photo ? " dish-thumb--photo" : ""}">
           <img src="${esc(img)}" alt="${esc(item.name)}" loading="lazy" decoding="async"
                onerror="this.closest('.dish-thumb').classList.add('no-img'); this.remove();" />
         </div>

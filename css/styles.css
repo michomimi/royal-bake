@@ -33,7 +33,7 @@
   --shadow-s: 0 12px 30px -18px rgba(36,31,26,.35);
   --maxw:     1200px;
   --ease:     cubic-bezier(.22,.61,.36,1);
-  --header-h: 76px;
+  --header-h: 88px;
 }
 
 /* ---------- reset / base ---------- */
@@ -114,8 +114,8 @@ ul{ list-style:none; }
 .header-inner{ height:100%; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
 .brand{ display:inline-flex; align-items:center; }
 .brand-logo{
-  height:58px; width:58px; border-radius:50%;
-  object-fit:contain; background:#fff; padding:4px;
+  height:72px; width:72px; border-radius:50%;
+  object-fit:contain; background:#fff; padding:3px;
   box-shadow:0 6px 18px -9px rgba(36,31,26,.55), 0 0 0 1.5px rgba(198,161,91,.45);
   transition:transform .35s var(--ease), box-shadow .35s var(--ease);
 }
@@ -264,7 +264,7 @@ ul{ list-style:none; }
   padding:.6rem 1.15rem; border-radius:999px; background:var(--bg-2);
   box-shadow:inset 0 0 0 1px var(--line); transition:all .25s var(--ease); white-space:nowrap;
 }
-.tab .ar{ font-family:var(--arabic); font-size:.95em; color:var(--ink-3); margin-inline-start:.55em; }
+.tab .ar{ font-family:var(--arabic); font-size:1em; color:var(--ink-3); margin-left:.6rem; }
 .tab:hover{ color:var(--ink); box-shadow:inset 0 0 0 1px var(--gold); }
 .tab.is-active{ background:var(--ink); color:var(--bg); box-shadow:none; }
 .tab.is-active .ar{ color:var(--gold-lite); }
@@ -288,6 +288,9 @@ ul{ list-style:none; }
 }
 .dish-thumb img{ width:100%; height:100%; object-fit:contain; padding:5px; display:block; transition:transform .5s var(--ease); }
 .dish:hover .dish-thumb img{ transform:scale(1.06); }
+/* real photos fill the frame edge-to-edge (no cutout padding) */
+.dish-thumb--photo{ background:var(--bg-3); }
+.dish-thumb--photo img{ object-fit:cover; padding:0; }
 .dish-thumb.no-img::after{
   content:""; position:absolute; inset:0;
   background:center/44% no-repeat
@@ -444,7 +447,7 @@ ul{ list-style:none; }
    ===================================================================== */
 .site-footer{ background:var(--ink); color:var(--bg); padding:clamp(48px,7vw,80px) 0 2rem; }
 .footer-grid{ display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:2.5rem; }
-.footer-logo{ height:70px; background:var(--bg); padding:.6rem; border-radius:14px; margin-bottom:1.2rem; }
+.footer-logo{ height:96px; width:96px; object-fit:contain; background:var(--bg); padding:.7rem; border-radius:18px; margin-bottom:1.2rem; }
 .footer-brand p{ color:rgba(246,240,230,.72); max-width:34ch; font-size:.95rem; }
 .footer-socials{ display:flex; gap:.7rem; margin-top:1.3rem; }
 .footer-socials .social{
@@ -542,7 +545,8 @@ ul{ list-style:none; }
    RESPONSIVE
    ===================================================================== */
 @media (max-width:900px){
-  :root{ --header-h:68px; }
+  :root{ --header-h:78px; }
+  .brand-logo{ height:62px; width:62px; }
   .nav{
     position:fixed; inset:var(--header-h) 0 auto 0; flex-direction:column; gap:0;
     background:var(--bg-2); padding:.5rem clamp(20px,5vw,48px) 1.4rem; border-bottom:1px solid var(--line);
@@ -566,6 +570,26 @@ ul{ list-style:none; }
   .footer-brand{ grid-column:1/-1; }
 }
 
+/* ---- tablets ---- */
+@media (max-width:768px){
+  .page-banner{ min-height:clamp(200px,34vh,320px); }
+}
+
+/* ---- large phones ---- */
+@media (max-width:640px){
+  /* menu category tabs become a tidy full-bleed horizontal scroll strip
+     instead of wrapping into many rows */
+  .menu-tabs{
+    flex-wrap:nowrap; justify-content:flex-start;
+    overflow-x:auto; overflow-y:hidden;
+    margin-inline:calc(-1 * clamp(20px,5vw,48px));
+    padding:0 clamp(20px,5vw,48px) .6rem;
+    scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  }
+  .menu-tabs::-webkit-scrollbar{ display:none; }
+  .tab{ flex:0 0 auto; }
+}
+
 @media (max-width:560px){
   .menu-grid{ grid-template-columns:1fr; }
   .dish-thumb{ width:88px; height:88px; }
@@ -574,6 +598,24 @@ ul{ list-style:none; }
   .footer-grid{ grid-template-columns:1fr; }
   .hero-cta{ flex-direction:column; align-items:stretch; }
   .hero-cta .btn{ width:100%; }
+}
+
+/* ---- small phones ---- */
+@media (max-width:430px){
+  .header-actions{ gap:.5rem; }
+  .signature-grid{ grid-template-columns:1fr; }
+  .dish{ padding:.85rem; gap:.85rem; }
+  .dish-thumb{ width:80px; height:80px; }
+  .dish-name{ font-size:1.08rem; }
+  .page-banner{ min-height:clamp(180px,32vh,280px); }
+  .fav-thumb{ width:120px; height:120px; }
+}
+
+/* ---- very small phones ---- */
+@media (max-width:360px){
+  :root{ --header-h:70px; }
+  .brand-logo{ height:54px; width:54px; }
+  .header-phone{ display:none; }   /* keep the header from crowding */
 }
 
 /* =====================================================================
