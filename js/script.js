@@ -190,6 +190,66 @@ const money = (n) => CONFIG.currency + n.toFixed(2);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 /* ---------------------------------------------------------------------
+   DISH PHOTOS
+   Representative food photography (Pexels, free to use), matched to each
+   dish by keyword so every item shows a relevant picture. To use your OWN
+   photo for a dish, drop it in images/menu/ and return that path here
+   instead of a Pexels id — e.g. `return "images/menu/hummus.jpg";`
+   --------------------------------------------------------------------- */
+const PX = (id) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=400`;
+
+function dishImage(name, cat) {
+  const n = name.toLowerCase();
+  const has = (re) => re.test(n);
+
+  switch (cat) {
+    case "drinks":
+      if (has(/coffee|tea/)) return PX(5113071);   // ornate pot pour
+      if (has(/juice/))       return PX(2479242);   // fruit juice
+      if (has(/ayran/))       return PX(8620365);   // pale drink
+      return PX(9685229);                           // pop / water / redbull
+    case "sweets":
+      return PX(5323489);                           // baklava
+    case "bbq":
+      if (has(/tawook|tawouk|chicken/)) return PX(8104932);
+      if (has(/lamb/))                  return PX(28086339);
+      return PX(8813933);                           // kebab skewers
+    case "wraps":
+      if (has(/falafel/)) return PX(4722522);
+      return PX(5779364);                           // grilled wrap
+    case "bowls":
+      return PX(5083910);                           // salad/rice bowls
+    case "platters":
+      return PX(8813933);                           // mixed grill
+    case "mini-pies":
+      if (has(/pizza/))   return PX(34349100);
+      if (has(/nutella/)) return PX(5323489);
+      if (has(/spinach/)) return PX(20182330);
+      return PX(6889715);                           // fatayer triangles
+    default: // breakfast, appetizers, manakish
+      if (has(/nutella|chocolate/))              return PX(5323489);
+      if (has(/tabouli|tabbouleh|tabouleh/))     return PX(5191811);
+      if (has(/fattoush|greek|salad/))           return PX(4899790);
+      if (has(/hummus|mutabal|baba|garlic sauce/)) return PX(6419394);
+      if (has(/falafel|kibbeh/))                 return PX(4722522);
+      if (has(/spinach/))                        return PX(20182330);
+      if (has(/veggie|vegetable|khodar|khodra|grape/)) return PX(4899790);
+      if (has(/zaatar|za'atar|kishk/))           return PX(7935287);
+      if (has(/mahamara|muhamara|muhammara/))    return PX(34349100);
+      if (has(/labneh/))                         return PX(2452060);
+      if (has(/meat|lahm|kafta|kebab|sujuk|donair|mortadella|awarma|sfeeha|musakhan|maqla/)) return PX(28104857);
+      if (has(/cheese/))                         return PX(27359350);
+      if (has(/pizza|special/))                  return PX(34349100);
+      if (has(/foul|fatteh|msabbaha|balila|fava|egg|beid|scrambled/)) return PX(5191851);
+      if (has(/mamounieh/))                      return PX(5323489);
+      if (has(/fries|batata|potato/))            return PX(6419394);
+      if (cat === "breakfast")  return PX(5191851);
+      if (cat === "appetizers") return PX(6419394);
+      return PX(27359350);                          // manakish default
+  }
+}
+
+/* ---------------------------------------------------------------------
    RENDER MENU (tabs + grid)
    --------------------------------------------------------------------- */
 const tabsEl = $("#menuTabs");
@@ -226,13 +286,21 @@ function renderGrid() {
       </button>`;
     }).join("");
 
+    const img = item.img || dishImage(item.name, cat.id);
+
     return `<article class="dish reveal" style="--d:${(i % 4) * 60}ms">
-      <div class="dish-head">
-        <h3 class="dish-name">${esc(item.name)}</h3>
-        ${item.ar ? `<span class="dish-ar">${esc(item.ar)}</span>` : ""}
+      <div class="dish-thumb">
+        <img src="${esc(img)}" alt="${esc(item.name)}" loading="lazy" decoding="async"
+             onerror="this.closest('.dish-thumb').classList.add('no-img'); this.remove();" />
       </div>
-      <p class="dish-desc">${esc(item.desc)}</p>
-      <div class="dish-options">${opts}</div>
+      <div class="dish-body">
+        <div class="dish-head">
+          <h3 class="dish-name">${esc(item.name)}</h3>
+          ${item.ar ? `<span class="dish-ar" dir="rtl">${esc(item.ar)}</span>` : ""}
+        </div>
+        <p class="dish-desc">${esc(item.desc)}</p>
+        <div class="dish-options">${opts}</div>
+      </div>
     </article>`;
   }).join("");
 

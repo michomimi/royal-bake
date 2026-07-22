@@ -278,6 +278,52 @@
 .js-anim .section-title.center.in::after{ width:120px; }
 
 /* ---------------------------------------------------------------------
+   15. SECTION DECOR — crisp brand line-art motifs + faint warm texture.
+   JS injects a .deco layer (behind content) into each section below the
+   hero and parallax-drifts the motifs as you scroll. Keeps the white
+   areas from ever feeling flat — no blur, on-brand, GPU-cheap.
+   --------------------------------------------------------------------- */
+.js-anim .has-deco{ position:relative; isolation:isolate; }
+.js-anim .has-deco > .wrap{ position:relative; z-index:1; }
+
+.deco{
+  position:absolute; inset:0; z-index:0;
+  overflow:hidden; pointer-events:none;
+  /* faint sesame-dot texture so plain bands have subtle warmth */
+  background-image:radial-gradient(rgba(169,134,59,.06) 1px, transparent 1.7px);
+  background-size:26px 26px;
+  background-position:-8px -8px;
+}
+
+.motif{
+  position:absolute; will-change:transform;
+  color:var(--gold);           /* stroke colour via currentColor */
+}
+.motif svg{ display:block; width:100%; height:100%; overflow:visible; }
+.motif path, .motif circle, .motif ellipse, .motif line{
+  fill:none; stroke:currentColor; stroke-width:1.6;
+  stroke-linecap:round; stroke-linejoin:round;
+  vector-effect:non-scaling-stroke;    /* stays a crisp hairline at any size */
+}
+.motif--seeds ellipse{ fill:currentColor; stroke:none; }
+
+.motif.c-gold  { color:var(--gold);  opacity:.32; }
+.motif.c-olive { color:var(--olive); opacity:.30; }
+.motif.c-wine  { color:var(--wine);  opacity:.22; }
+.motif.c-bright{ color:var(--bright);opacity:.30; }
+
+/* corner anchors — motifs peek in from the edges, clipped by .deco */
+.motif.tl{ top:-3%;  left:-3%;  }
+.motif.tr{ top:5%;   right:-3%; }
+.motif.bl{ bottom:4%;left:-4%;  }
+.motif.br{ bottom:-4%;right:-2%;}
+
+@media (max-width:640px){
+  /* soften the decor a touch on small screens */
+  .deco{ background-size:22px 22px; opacity:.8; }
+}
+
+/* ---------------------------------------------------------------------
    REDUCED MOTION — turn the whole layer off gracefully
    --------------------------------------------------------------------- */
 @media (prefers-reduced-motion:reduce){
@@ -292,6 +338,7 @@
   .js-anim .hero-title em,
   .js-anim .section-title em{ animation:none !important; }
   .js-anim [data-parallax] img{ transform:none !important; }
+  .motif{ transform:none !important; }   /* motifs stay as static decor */
   .js-anim .tilt{ transform:none !important; }
   .js-anim .tilt::after{ display:none !important; }
   .js-anim .magnetic{ transform:none !important; }

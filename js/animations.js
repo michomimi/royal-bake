@@ -124,6 +124,106 @@
   })();
 
   /* =================================================================
+     0.5 SECTION DECOR — brand line-art motifs that parallax on scroll
+     Injects a .deco layer (faint texture + corner motifs) behind the
+     content of every section below the hero, then drifts each motif at
+     its own rate as you scroll. Motifs are always placed (static, tasteful
+     decor); the drift only runs when motion is allowed. Layout-free scroll
+     engine, so it doesn't reintroduce jank.
+     ================================================================= */
+  (function sectionDecor() {
+    // Compact SVG motifs drawn in the brand's line-art style. Colour +
+    // stroke come from CSS (currentColor), so markup stays tiny.
+    const SVG = {
+      ring:  `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="95"/><circle cx="100" cy="100" r="66"/><circle cx="100" cy="100" r="4"/></svg>`,
+      arch:  `<svg viewBox="0 0 140 180"><path d="M14 180 V70 C14 33 41 8 70 8 C99 8 126 33 126 70 V180"/><path d="M32 180 V73 C32 44 49 24 70 24 C91 24 108 44 108 73 V180"/></svg>`,
+      sprig: `<svg viewBox="0 0 80 200"><path d="M40 198 L40 8"/><path d="M40 58 C24 50 16 38 14 24"/><path d="M40 58 C56 50 64 38 66 24"/><path d="M40 104 C26 96 18 86 16 72"/><path d="M40 104 C54 96 62 86 64 72"/><path d="M40 150 C28 142 22 132 20 120"/><path d="M40 150 C52 142 58 132 60 120"/><ellipse cx="12" cy="20" rx="7" ry="12"/><ellipse cx="68" cy="20" rx="7" ry="12"/></svg>`,
+      seeds: `<svg viewBox="0 0 160 160"><ellipse cx="30" cy="40" rx="6" ry="3" transform="rotate(-20 30 40)"/><ellipse cx="72" cy="24" rx="6" ry="3" transform="rotate(12 72 24)"/><ellipse cx="122" cy="46" rx="6" ry="3" transform="rotate(-8 122 46)"/><ellipse cx="50" cy="82" rx="6" ry="3" transform="rotate(24 50 82)"/><ellipse cx="100" cy="92" rx="6" ry="3" transform="rotate(-16 100 92)"/><ellipse cx="26" cy="120" rx="6" ry="3" transform="rotate(10 26 120)"/><ellipse cx="78" cy="132" rx="6" ry="3" transform="rotate(-22 78 132)"/><ellipse cx="132" cy="120" rx="6" ry="3" transform="rotate(16 132 120)"/><ellipse cx="146" cy="84" rx="6" ry="3" transform="rotate(-6 146 84)"/></svg>`,
+      star:  `<svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.8 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>`,
+    };
+    const ASPECT = { ring: 1, arch: 140 / 180, sprig: 80 / 200, seeds: 1, star: 1 };
+
+    // 2 motifs per section, varied in shape / colour / corner / drift speed.
+    const DECOR = [
+      { sel: ".about", items: [
+        { m: "sprig", pos: "tr", size: 156, speed:  64, c: "c-olive" },
+        { m: "ring",  pos: "bl", size: 240, speed: -54, rot: 22, c: "c-gold" },
+      ]},
+      { sel: ".menu-section", items: [
+        { m: "arch",  pos: "tl", size: 210, speed:  58, c: "c-gold" },
+        { m: "seeds", pos: "br", size: 190, speed: -46, c: "c-wine" },
+      ]},
+      { sel: ".order-section", items: [
+        { m: "ring",  pos: "tr", size: 220, speed: -62, rot: -20, c: "c-olive" },
+        { m: "star",  pos: "bl", size: 96,  speed:  52, rot: 40, c: "c-gold" },
+      ]},
+      { sel: ".chefs", items: [
+        { m: "arch",  pos: "tr", size: 220, speed:  60, c: "c-gold" },
+        { m: "sprig", pos: "bl", size: 156, speed: -52, c: "c-olive" },
+      ]},
+      { sel: ".contact", items: [
+        { m: "ring",  pos: "tl", size: 210, speed:  56, rot: 18, c: "c-wine" },
+        { m: "seeds", pos: "br", size: 180, speed: -46, c: "c-gold" },
+      ]},
+    ];
+
+    const motifs = [];
+    DECOR.forEach(({ sel, items }) => {
+      const section = $(sel);
+      if (!section) return;
+      section.classList.add("has-deco");
+      const deco = document.createElement("div");
+      deco.className = "deco";
+      deco.setAttribute("aria-hidden", "true");
+      items.forEach((it) => {
+        const el = document.createElement("div");
+        el.className = `motif motif--${it.m} ${it.pos} ${it.c}`;
+        const h = it.size, w = Math.round(it.size * (ASPECT[it.m] || 1));
+        el.style.width = w + "px";
+        el.style.height = h + "px";
+        el.dataset.speed = it.speed;
+        if (it.rot) el.dataset.rot = it.rot;
+        el.innerHTML = SVG[it.m] || "";
+        deco.appendChild(el);
+        motifs.push(el);
+      });
+      section.insertBefore(deco, section.firstChild);
+    });
+
+    if (reduce || !motifs.length) return; // motifs placed; skip the drift
+
+    // Layout-free parallax: measure document-relative centres once, then read
+    // only window.scrollY while scrolling (no per-frame reflow).
+    let boxes = [];
+    function measure() {
+      const sc = window.scrollY;
+      boxes = motifs.map((el) => {
+        const r = el.getBoundingClientRect();
+        return { el, mid: r.top + sc + r.height / 2,
+                 speed: +el.dataset.speed || 0, rot: +el.dataset.rot || 0 };
+      });
+    }
+    let ticking = false;
+    function update() {
+      const vh = window.innerHeight, sc = window.scrollY;
+      for (const b of boxes) {
+        const progress = (vh / 2 - (b.mid - sc)) / vh;   // ~ -0.5 .. +0.5
+        const y = (progress * b.speed).toFixed(1);
+        b.el.style.transform = b.rot
+          ? `translate3d(0, ${y}px, 0) rotate(${(progress * b.rot).toFixed(1)}deg)`
+          : `translate3d(0, ${y}px, 0)`;
+      }
+      ticking = false;
+    }
+    function onScroll() { if (!ticking) { ticking = true; raf(update); } }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", () => { measure(); update(); }, { passive: true });
+    window.addEventListener("load", () => { measure(); update(); });
+    measure(); update();
+  })();
+
+  /* =================================================================
      1. SCROLL PROGRESS BAR
      ================================================================= */
   (function scrollProgress() {
