@@ -726,9 +726,15 @@ ul{ list-style:none; }
 .cat-card:hover .go{ background:var(--gold); color:#fff; transform:translateX(3px); }
 .cat-card .go svg{ width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2; }
 
-/* ---------- HOME: closing CTA band ---------- */
-.cta-band{ padding:clamp(56px,9vw,110px) 0; text-align:center;
-  background:linear-gradient(160deg, var(--ink), #33291d); color:var(--bg); }
+/* ---------- HOME: closing CTA band (living warm gradient) ---------- */
+.cta-band{
+  position:relative; overflow:hidden; isolation:isolate;
+  padding:clamp(56px,9vw,110px) 0; text-align:center; color:var(--bg);
+  /* flows through deep brown → wine → gold → olive; animated in animations.css */
+  background:linear-gradient(125deg, #241610 0%, #4a2a1e 26%, #7a3b32 48%, #6e5a2c 70%, #241610 100%);
+  background-size:280% 280%;
+}
+.cta-band > .wrap{ position:relative; z-index:2; }
 .cta-band h2{ font-family:var(--display); font-weight:500; color:#FFF8EC; font-size:clamp(2rem,5vw,3.2rem); }
 .cta-band p{ color:rgba(246,240,230,.8); max-width:52ch; margin:1rem auto 2rem; }
 .cta-band .eyebrow{ color:var(--gold-lite); justify-content:center; }
