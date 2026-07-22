@@ -13,6 +13,10 @@ const CONFIG = {
   phoneHref: "4036804050",
   orderEmail: "royalbake2025@gmail.com",
   currency: "$",
+  // Your Toast online-ordering page URL (e.g. https://www.toasttab.com/royal-bake/v3
+  // or an order.toasttab.com/... link). Toast handles the card payment. Paste it
+  // here to turn on "Pay Now by Card". While empty, Pay Now falls back gracefully.
+  toastOrderUrl: "",
   address: "3334 32 St NE, Calgary, AB T1Y 6B9",
   hours: "Open daily · 9 AM – 8 PM",
   maps: "https://maps.google.com/?q=3334+32+St+NE,+Calgary,+AB+T1Y+6B9",
@@ -99,7 +103,7 @@ const cartHTML = `
     <div class="cart-body" id="cartBody"></div>
     <div class="cart-foot" id="cartFoot">
       <div class="cart-total"><span>Subtotal</span><strong id="cartSubtotal">$0.00</strong></div>
-      <p class="cart-fine">Taxes calculated at pickup. This starts your order — we'll confirm by phone.</p>
+      <p class="cart-fine">Pickup order — choose to pay now by card or when you collect. We'll confirm by phone.</p>
       <button class="btn btn-primary btn-block" id="checkoutBtn" disabled>Checkout</button>
     </div>
   </aside>`;
@@ -110,10 +114,10 @@ const modalHTML = `
       <button class="icon-btn modal-close" id="checkoutClose" aria-label="Close checkout">${IC_X}</button>
       <div class="checkout-step" id="checkoutForm">
         <h3>Almost There</h3>
-        <p class="modal-sub">Choose how you'd like your order and add your details.</p>
-        <div class="seg" role="radiogroup" aria-label="Order type">
-          <button type="button" class="seg-btn is-active" data-type="Pickup" aria-pressed="true">Pickup</button>
-          <button type="button" class="seg-btn" data-type="In-Store" aria-pressed="false">In-Store</button>
+        <p class="modal-sub">Pickup order — choose how you'd like to pay, then add your details.</p>
+        <div class="seg" role="radiogroup" aria-label="Payment method">
+          <button type="button" class="seg-btn is-active" data-pay="pickup" aria-pressed="true">Pay at Pickup</button>
+          <button type="button" class="seg-btn" data-pay="now" aria-pressed="false">Pay Now · Card</button>
         </div>
         <div class="field"><label for="oName">Full name</label><input id="oName" type="text" autocomplete="name" required /></div>
         <div class="field"><label for="oPhone">Phone</label><input id="oPhone" type="tel" autocomplete="tel" required /></div>
@@ -125,12 +129,9 @@ const modalHTML = `
       </div>
       <div class="checkout-step" id="checkoutDone" hidden>
         <div class="done-mark" aria-hidden="true"><svg viewBox="0 0 52 52" class="ic"><circle cx="26" cy="26" r="24"/><path d="M15 27l8 8 15-16"/></svg></div>
-        <h3>Order Received!</h3>
+        <h3 id="doneTitle">Order Received!</h3>
         <p class="modal-sub" id="doneMsg"></p>
-        <div class="done-actions">
-          <a href="tel:${CONFIG.phoneHref}" class="btn btn-primary btn-block">Call to Confirm · (403) 680 4050</a>
-          <a href="#" class="btn btn-ghost btn-block" id="emailOrder">Email My Order</a>
-        </div>
+        <div class="done-actions" id="doneActions"></div>
         <button class="link-btn" id="orderAgain">Start a new order</button>
       </div>
     </div>
@@ -301,7 +302,7 @@ overlay.addEventListener("click", () => { closeDrawer(); closeModal(); });
    ===================================================================== */
 const formStep = $("#checkoutForm");
 const doneStep = $("#checkoutDone");
-let orderType = "Pickup";
+let payMethod = "pickup"; // "pickup" (pay at pickup) | "now" (pay now by card via Toast)
 
 function renderCheckoutSummary() {
   const rows = cart.map((l) =>
@@ -327,7 +328,7 @@ $$(".seg-btn").forEach((b) =>
   b.addEventListener("click", () => {
     $$(".seg-btn").forEach((x) => { x.classList.remove("is-active"); x.setAttribute("aria-pressed", "false"); });
     b.classList.add("is-active"); b.setAttribute("aria-pressed", "true");
-    orderType = b.dataset.type;
+    payMethod = b.dataset.pay;
   })
 );
 
@@ -337,12 +338,13 @@ function buildOrderText() {
   const time = $("#oTime").value.trim();
   const notes = $("#oNotes").value.trim();
   const L = [];
-  L.push(`New ${orderType} order — ${CONFIG.restaurant}`, "");
+  L.push(`New pickup order — ${CONFIG.restaurant}`, "");
   L.push(`Name: ${name}`, `Phone: ${phone}`);
+  L.push(`Payment: ${payMethod === "now" ? "Paying now by card" : "Pay at pickup"}`);
   if (time) L.push(`Preferred time: ${time}`);
   L.push("", "Order:");
   cart.forEach((l) => L.push(`• ${l.qty}x ${l.name}${l.size ? " (" + l.size + ")" : ""} — ${money(l.price * l.qty)}`));
-  L.push("", `Subtotal: ${money(cartSubtotal())} (taxes calculated in store)`);
+  L.push("", `Subtotal: ${money(cartSubtotal())} (taxes added at checkout)`);
   if (notes) L.push("", `Notes: ${notes}`);
   return L.join("\n");
 }
@@ -359,11 +361,31 @@ $("#placeOrder").addEventListener("click", () => {
   if (!ok) { status.textContent = "Please add your name and phone number."; status.classList.add("err"); return; }
   status.textContent = ""; status.classList.remove("err");
 
-  const subject = `${orderType} order — ${CONFIG.restaurant}`;
+  const name = esc(nameInp.value.trim());
+  const total = money(cartSubtotal());
+  const subject = `Pickup order — ${CONFIG.restaurant}`;
   const mailto = `mailto:${CONFIG.orderEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(buildOrderText())}`;
-  $("#emailOrder").setAttribute("href", mailto);
+  const callBtn = `<a href="tel:${CONFIG.phoneHref}" class="btn btn-ghost btn-block">Call Us · (403) 680 4050</a>`;
+  const emailBtn = `<a href="${mailto}" class="btn btn-ghost btn-block">Email My Order</a>`;
+  const title = $("#doneTitle"), doneMsg = $("#doneMsg"), doneActions = $("#doneActions");
 
-  $("#doneMsg").innerHTML = `Thanks, <strong>${esc(nameInp.value.trim())}</strong>! We've noted your <strong>${orderType}</strong> order.<br>Online ordering isn't fully live yet — please call to confirm, or email your order below and we'll have it ready.`;
+  if (payMethod === "now") {
+    // Card payment is handled by Toast online ordering.
+    if (CONFIG.toastOrderUrl) {
+      title.textContent = "One More Step";
+      doneMsg.innerHTML = `Thanks, <strong>${name}</strong>! Finish your <strong>${total}</strong> pickup order and pay by card securely on our Toast ordering page.`;
+      doneActions.innerHTML =
+        `<a href="${CONFIG.toastOrderUrl}" target="_blank" rel="noopener" class="btn btn-primary btn-block">Pay by Card on Toast →</a>` + callBtn;
+    } else {
+      title.textContent = "Almost There";
+      doneMsg.innerHTML = `Thanks, <strong>${name}</strong>! To pay your <strong>${total}</strong> order by card, we'll send you a secure payment link — or just call us to pay over the phone. You can also choose <strong>Pay at Pickup</strong>.`;
+      doneActions.innerHTML = `<a href="tel:${CONFIG.phoneHref}" class="btn btn-primary btn-block">Call to Pay · (403) 680 4050</a>` + emailBtn;
+    }
+  } else {
+    title.textContent = "Order Received!";
+    doneMsg.innerHTML = `Thanks, <strong>${name}</strong>! Your <strong>${total}</strong> pickup order is in — pay when you collect. We'll call to confirm your order and pickup time.`;
+    doneActions.innerHTML = `<a href="tel:${CONFIG.phoneHref}" class="btn btn-primary btn-block">Call to Confirm · (403) 680 4050</a>` + emailBtn;
+  }
   formStep.hidden = true; doneStep.hidden = false;
 });
 
