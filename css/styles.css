@@ -200,6 +200,9 @@ ul{ list-style:none; }
   border-radius:inherit; pointer-events:none;
 }
 .arch img,.arch video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:2; }
+/* About video slideshow — clips cross-fade over the poster image */
+.about-vid{ opacity:0; z-index:3; transition:opacity .9s var(--ease); }
+.about-vid.is-active{ opacity:1; }
 .arch-label{ position:relative; z-index:1; font-size:.82rem; color:rgba(36,31,26,.55); font-weight:600; text-align:center; padding:1rem; }
 .arch-label code{ display:inline-block; margin-top:.25rem; background:rgba(36,31,26,.08); padding:.15em .5em; border-radius:6px; font-size:.9em; }
 

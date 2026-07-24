@@ -181,6 +181,47 @@
   })();
 
   /* =================================================================
+     0.3 ABOUT VIDEO SLIDESHOW — plays each clip, then cross-fades to the
+     next (looping). Missing files are skipped; if none load, the poster
+     image stays. Muted so it can autoplay; paused under reduced-motion.
+     ================================================================= */
+  (function aboutVideos() {
+    const show = $(".about-video-show");
+    if (!show) return;
+    const vids = $$("video", show);
+    if (!vids.length || reduce) return;   // reduced-motion → keep the still poster
+
+    const broken = new Set();
+    let idx = 0, active = null;
+
+    function nextIndex(from) {
+      for (let k = 1; k <= vids.length; k++) {
+        const j = (from + k) % vids.length;
+        if (!broken.has(vids[j])) return j;
+      }
+      return broken.has(vids[from]) ? -1 : from; // last one standing (or none)
+    }
+    function activate(n) {
+      if (broken.has(vids[n])) { const j = nextIndex(n); if (j < 0) return; n = j; }
+      idx = n; active = vids[n];
+      vids.forEach((v, i) => v.classList.toggle("is-active", i === n));
+      try { active.currentTime = 0; } catch (e) {}
+      const p = active.play();
+      if (p && p.catch) p.catch(() => {});
+    }
+
+    vids.forEach((v) => {
+      v.addEventListener("ended", () => { if (v === active) { const j = nextIndex(idx); if (j >= 0) activate(j); } });
+      v.addEventListener("error", () => {
+        broken.add(v); v.classList.remove("is-active");
+        if (v === active) { const j = nextIndex(idx); if (j >= 0) activate(j); }
+      });
+    });
+
+    activate(0);
+  })();
+
+  /* =================================================================
      0.5 SECTION DECOR — brand line-art motifs that parallax on scroll
      Injects a .deco layer (faint texture + corner motifs) behind the
      content of every section below the hero, then drifts each motif at
