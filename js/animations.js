@@ -191,6 +191,20 @@
     const vids = $$("video", show);
     if (!vids.length || reduce) return;   // reduced-motion → keep the still poster
 
+    // decorative overlays: bottom vignette + gold frame ring
+    const scrim = document.createElement("div"); scrim.className = "about-scrim"; scrim.setAttribute("aria-hidden", "true");
+    const frame = document.createElement("div"); frame.className = "about-frame"; frame.setAttribute("aria-hidden", "true");
+    // clickable progress dots (one per clip)
+    const dotsWrap = document.createElement("div"); dotsWrap.className = "about-dots"; dotsWrap.setAttribute("role", "tablist"); dotsWrap.setAttribute("aria-label", "Video clips");
+    const dots = vids.map((v, i) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.setAttribute("aria-label", "Play clip " + (i + 1));
+      b.addEventListener("click", () => activate(i));
+      dotsWrap.appendChild(b);
+      return b;
+    });
+    show.appendChild(scrim); show.appendChild(frame); show.appendChild(dotsWrap);
+
     const broken = new Set();
     let idx = 0, active = null;
 
@@ -205,15 +219,17 @@
       if (broken.has(vids[n])) { const j = nextIndex(n); if (j < 0) return; n = j; }
       idx = n; active = vids[n];
       vids.forEach((v, i) => v.classList.toggle("is-active", i === n));
+      dots.forEach((d, i) => d.classList.toggle("is-active", i === n));
       try { active.currentTime = 0; } catch (e) {}
       const p = active.play();
       if (p && p.catch) p.catch(() => {});
     }
 
-    vids.forEach((v) => {
+    vids.forEach((v, i) => {
       v.addEventListener("ended", () => { if (v === active) { const j = nextIndex(idx); if (j >= 0) activate(j); } });
       v.addEventListener("error", () => {
         broken.add(v); v.classList.remove("is-active");
+        dots[i].style.display = "none";                 // hide the dot for a missing clip
         if (v === active) { const j = nextIndex(idx); if (j >= 0) activate(j); }
       });
     });

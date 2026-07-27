@@ -203,6 +203,30 @@ ul{ list-style:none; }
 /* About video slideshow — clips cross-fade over the poster image */
 .about-vid{ opacity:0; z-index:3; transition:opacity .9s var(--ease); }
 .about-vid.is-active{ opacity:1; }
+
+/* ---- polished framing for the About video ---- */
+.about-media{ position:relative; }
+.about-video-show{ box-shadow:0 34px 66px -30px rgba(36,31,26,.6); }
+/* soft bottom vignette so the frame + dots read on any clip */
+.about-scrim{ position:absolute; inset:auto 0 0 0; height:42%; z-index:4; pointer-events:none;
+  background:linear-gradient(0deg, rgba(20,15,10,.55), rgba(20,15,10,0)); }
+/* premium double inner ring (cream + gold) sitting on top of the video */
+.about-frame{ position:absolute; inset:0; z-index:5; pointer-events:none; border-radius:inherit;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.32), inset 0 0 0 7px rgba(198,161,91,.28); }
+/* clickable progress dots for the 5 clips */
+.about-dots{ position:absolute; left:0; right:0; bottom:14px; z-index:6;
+  display:flex; gap:.4rem; justify-content:center; }
+.about-dots button{ width:22px; height:4px; padding:0; border-radius:999px;
+  background:rgba(255,255,255,.42); transition:background .3s var(--ease), transform .3s var(--ease); }
+.about-dots button:hover{ background:rgba(255,255,255,.7); }
+.about-dots button.is-active{ background:var(--gold); transform:scaleX(1.15); }
+/* floating brand badge peeking from the frame */
+.about-badge{ position:absolute; z-index:7; left:-14px; bottom:26px;
+  background:var(--bg-2); border:1px solid var(--line); border-radius:14px;
+  padding:.62rem 1.05rem; box-shadow:var(--shadow-s);
+  display:flex; flex-direction:column; line-height:1.1; text-align:center; }
+.about-badge span{ font-size:.68rem; letter-spacing:.15em; text-transform:uppercase; color:var(--ink-3); }
+.about-badge strong{ font-family:var(--display); font-size:1.15rem; color:var(--wine); }
 .arch-label{ position:relative; z-index:1; font-size:.82rem; color:rgba(36,31,26,.55); font-weight:600; text-align:center; padding:1rem; }
 .arch-label code{ display:inline-block; margin-top:.25rem; background:rgba(36,31,26,.08); padding:.15em .5em; border-radius:6px; font-size:.9em; }
 
