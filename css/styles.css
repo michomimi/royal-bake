@@ -330,10 +330,11 @@ ul{ list-style:none; }
   --pop:0px;
   --persp:1200px;
   backface-visibility:hidden;      /* keeps text crisp while it scales up */
-  /* springy easing overshoots slightly, so it lands with a "pump" */
-  transition:transform .55s cubic-bezier(.34,1.42,.64,1),
-             box-shadow .55s var(--ease),
-             border-color .3s var(--ease);
+  /* soft ease-out, no overshoot — the card glides forward and settles
+     rather than snapping into place */
+  transition:transform .72s cubic-bezier(.25,.8,.3,1),
+             box-shadow .72s cubic-bezier(.25,.8,.3,1),
+             border-color .4s var(--ease);
 }
 .menu-grid .dish:hover{
   --pop:680px;
@@ -347,11 +348,11 @@ ul{ list-style:none; }
    `translate` is the standalone property, so it layers on top of the
    transform above instead of overwriting it */
 @keyframes dishBreathe{
-  from{ translate:0 -5px; }
-  to  { translate:0 5px; }
+  from{ translate:0 -3px; }
+  to  { translate:0 3px; }
 }
 .menu-grid .dish:hover{
-  animation:dishBreathe 2.8s ease-in-out .55s infinite alternate;
+  animation:dishBreathe 3.4s ease-in-out .72s infinite alternate;
 }
 
 /* dish photo thumbnail */
@@ -904,14 +905,14 @@ ul{ list-style:none; }
   background:var(--img) center/cover no-repeat;
   transform:scale(1.16);
   filter:blur(17px) saturate(1.06);
-  transition:transform .6s var(--ease);
+  transition:transform .72s cubic-bezier(.25,.8,.3,1);
 }
 .menu-grid .dish-thumb img{
   position:relative; z-index:1;
   width:100%; height:100%; object-fit:contain;
   padding:7%;                    /* breathing room so the plate never touches the frame */
   object-position:50% 40%;       /* lifted clear of the text scrim below */
-  transition:transform .6s var(--ease);
+  transition:transform .72s cubic-bezier(.25,.8,.3,1), height .6s cubic-bezier(.25,.8,.3,1);
 }
 /* the photo keeps growing as the card pops — the second half of the effect */
 /* On the popped card the photo is confined to the upper part, so the text
@@ -923,6 +924,20 @@ ul{ list-style:none; }
   transform:scale(1.04);
 }
 .menu-grid .dish:hover .dish-thumb::before{ transform:scale(1.24); }
+
+/* animations.js tags every revealed element with data-reveal, and
+   `.js-anim [data-reveal]` (animations.css, loaded after this file) sets its
+   own .9s transition. That ties with `.menu-grid .dish` on specificity and
+   wins on source order, which was overriding the card's easing — hence the
+   #menuGrid here purely to outrank it.
+   opacity stays at the reveal's own .9s so scroll-in still fades normally;
+   only the hover motion is retimed. */
+#menuGrid .dish{
+  transition:transform .72s cubic-bezier(.25,.8,.3,1),
+             opacity .9s var(--ease),
+             box-shadow .72s cubic-bezier(.25,.8,.3,1),
+             border-color .4s var(--ease);
+}
 
 /* A warm specular highlight that follows the cursor across the card, as if a
    light were catching the surface as it tilts. --mx/--my come from menu.js.
@@ -958,12 +973,12 @@ ul{ list-style:none; }
 .menu-grid .dish-ar,
 .menu-grid .dish-desc,
 .menu-grid .dish-options{
-  transition:transform .45s cubic-bezier(.34,1.4,.64,1), opacity .3s var(--ease);
+  transition:transform .6s cubic-bezier(.25,.8,.3,1), opacity .4s var(--ease);
 }
-.menu-grid .dish:hover .dish-name   { transform:translateZ(34px); transition-delay:.04s; }
-.menu-grid .dish:hover .dish-ar     { transform:translateZ(30px); transition-delay:.08s; }
-.menu-grid .dish:hover .dish-desc   { transform:translateZ(22px); transition-delay:.12s; }
-.menu-grid .dish:hover .dish-options{ transform:translateZ(44px); transition-delay:.16s; }
+.menu-grid .dish:hover .dish-name   { transform:translateZ(34px); transition-delay:.06s; }
+.menu-grid .dish:hover .dish-ar     { transform:translateZ(30px); transition-delay:.1s; }
+.menu-grid .dish:hover .dish-desc   { transform:translateZ(22px); transition-delay:.14s; }
+.menu-grid .dish:hover .dish-options{ transform:translateZ(44px); transition-delay:.18s; }
 
 /* The description sat as plain white on top of the photo, so it washed out
    over the pale dishes. It now carries its own dark plate, which keeps it

@@ -568,7 +568,11 @@
   (function tilt() {
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
-    const cards = $$(".sig-card, .dish, .delivery-card:not([data-soon]), .chef-card");
+    // .dish is deliberately absent: menu.js owns the tilt, glare and 3D pop on
+    // menu cards. Binding both would give every dish two writers for --rx/--ry
+    // and let `.js-anim .tilt` (animations.css, loaded after styles.css) win the
+    // specificity tie on transition, overriding the menu card's own easing.
+    const cards = $$(".sig-card, .delivery-card:not([data-soon]), .chef-card");
     const MAX = 7; // degrees
 
     function bind(card) {
@@ -612,15 +616,8 @@
     }
 
     cards.forEach(bind);
-
-    // New menu cards appear on tab switch — tilt-bind them too.
-    const grid = $("#menuGrid");
-    if (grid) {
-      const mo = new MutationObserver(() => {
-        $$(".dish:not(.tilt)", grid).forEach(bind);
-      });
-      mo.observe(grid, { childList: true });
-    }
+    // (menu cards re-rendered on tab switch are handled by menu.js, which
+    // delegates from #menuGrid and so needs no re-binding)
   })();
 
   /* =================================================================
