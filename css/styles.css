@@ -320,7 +320,7 @@ ul{ list-style:none; }
    and it leans toward the cursor (--rx/--ry are set per-card by js/menu.js).
 
    --pop and --persp are the two dials: visual growth = persp / (persp - pop),
-   so 1200/(1200-630) = 2.11x. js/menu.js reads the same two numbers to keep
+   so 1200/(1200-680) = 2.31x. js/menu.js reads the same two numbers to keep
    the enlarged card from running off the edge of the screen.
 
    Scoped under .menu-grid deliberately: the cards also carry .reveal, and
@@ -336,7 +336,7 @@ ul{ list-style:none; }
              border-color .3s var(--ease);
 }
 .menu-grid .dish:hover{
-  --pop:630px;
+  --pop:680px;
   z-index:20;
   transform:perspective(var(--persp)) translateZ(var(--pop))
             rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
@@ -876,7 +876,7 @@ ul{ list-style:none; }
    Markup is unchanged — js/menu.js still emits .dish > .dish-thumb +
    .dish-body; only the styling here repositions those two.
    ===================================================================== */
-.menu-grid{ grid-template-columns:repeat(auto-fill,minmax(238px,1fr)); gap:1.2rem; }
+.menu-grid{ grid-template-columns:repeat(auto-fill,minmax(202px,1fr)); gap:1.1rem; }
 
 .menu-grid .dish{
   display:block; padding:0;
@@ -911,25 +911,34 @@ ul{ list-style:none; }
 /* text over the photo */
 .menu-grid .dish-body{
   position:absolute; left:0; right:0; bottom:0; z-index:2;
-  padding:2.1rem .9rem .9rem;
-  gap:.25rem;
+  padding:1.5rem .78rem .78rem;
+  gap:.2rem;
   border-radius:0 0 var(--radius) var(--radius);
   background:linear-gradient(to top,
-    rgba(18,14,10,.95) 16%, rgba(18,14,10,.78) 52%, rgba(18,14,10,0) 100%);
+    rgba(18,14,10,.95) 14%, rgba(18,14,10,.72) 58%, rgba(18,14,10,0) 100%);
   color:#fff;
 }
-.menu-grid .dish-name{ color:#fff; font-size:1.06rem; }
-.menu-grid .dish-ar{ color:var(--gold-lite); font-size:1.12rem; }
-.menu-grid .dish-desc{
-  color:rgba(255,255,255,.82); font-size:.8rem; line-height:1.42;
-  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden;
+.menu-grid .dish-head{ flex-wrap:nowrap; gap:.4rem; }
+/* keep the name and its Arabic on one line: when the Arabic wraps, the
+   bottom-anchored panel grows upward and rows stop lining up */
+.menu-grid .dish-name{
+  color:#fff; font-size:.96rem;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;
 }
-/* the popped card is big enough to show the full description */
-.menu-grid .dish:hover .dish-desc{ -webkit-line-clamp:4; }
+.menu-grid .dish-ar{ color:var(--gold-lite); font-size:1rem; }
+.menu-grid .dish-desc{
+  color:rgba(255,255,255,.85); font-size:.75rem; line-height:1.4;
+  display:none;   /* hidden on the small tile so the photo stays the hero */
+}
+/* the popped card has room, so the description appears with it */
+.menu-grid .dish:hover .dish-desc{
+  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:4; overflow:hidden;
+}
 
-.menu-grid .dish-options{ margin-top:.55rem; }
+.menu-grid .dish-options{ margin-top:.45rem; gap:.4rem; }
 .menu-grid .add-chip{
   background:rgba(255,255,255,.12); color:#fff;
+  font-size:.76rem; padding:.38rem .68rem;
   box-shadow:inset 0 0 0 1.4px rgba(232,214,172,.5);
   backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
 }
