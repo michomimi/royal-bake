@@ -255,6 +255,114 @@ function dishImage(name, cat) {
     chip.classList.remove("pulse"); void chip.offsetWidth; chip.classList.add("pulse");
   });
 
+  /* ---------------------------------------------------------------
+     3D dish preview — hovering a card floats a big tilted copy of it
+     into the centre of the screen. The floating layer is inert
+     (pointer-events:none in CSS) so it can never steal the hover from
+     the card underneath; if it could, the two would fight and flicker.
+     --------------------------------------------------------------- */
+  (function dishZoom() {
+    // pointer-driven and purely decorative — skip touch, skip reduced motion
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    if (typeof prefersReducedMotion !== "undefined" && prefersReducedMotion) return;
+
+    const SHOW_DELAY = 220; // hover intent: ignores a cursor merely sweeping past
+    const HIDE_DELAY = 120; // grace period while crossing the gap between two cards
+
+    const layer = document.createElement("div");
+    layer.className = "dish-zoom";
+    layer.setAttribute("aria-hidden", "true"); // decorative twin; the real card is already in the a11y tree
+    layer.innerHTML = `
+      <div class="dish-zoom-card">
+        <div class="dish-zoom-thumb"><img alt="" decoding="async" /></div>
+        <div class="dish-zoom-info">
+          <div class="dish-zoom-head">
+            <h3 class="dish-zoom-name"></h3>
+            <span class="dish-zoom-ar" dir="rtl"></span>
+          </div>
+          <p class="dish-zoom-desc"></p>
+          <div class="dish-zoom-prices"></div>
+        </div>
+      </div>`;
+    document.body.appendChild(layer);
+
+    const card = layer.querySelector(".dish-zoom-card");
+    const thumb = layer.querySelector(".dish-zoom-thumb");
+    const zImg = layer.querySelector(".dish-zoom-thumb img");
+    const zName = layer.querySelector(".dish-zoom-name");
+    const zAr = layer.querySelector(".dish-zoom-ar");
+    const zDesc = layer.querySelector(".dish-zoom-desc");
+    const zPrices = layer.querySelector(".dish-zoom-prices");
+
+    let showT = 0, hideT = 0, active = null;
+
+    // never float over an open cart drawer or checkout modal
+    const busy = () => document.querySelector("#cartDrawer.open, .modal.open") !== null;
+
+    function show(dish) {
+      if (busy() || !dish.isConnected) return;
+
+      const srcThumb = dish.querySelector(".dish-thumb");
+      const srcImg = srcThumb && srcThumb.querySelector("img");
+      thumb.classList.toggle("is-photo", !!srcThumb && srcThumb.classList.contains("dish-thumb--photo"));
+      thumb.classList.toggle("no-img", !srcImg);
+      if (srcImg) zImg.src = srcImg.currentSrc || srcImg.src;
+
+      const ar = dish.querySelector(".dish-ar");
+      zName.textContent = dish.querySelector(".dish-name").textContent.trim();
+      zAr.textContent = ar ? ar.textContent.trim() : "";
+      zDesc.textContent = dish.querySelector(".dish-desc").textContent.trim();
+      zPrices.innerHTML = [...dish.querySelectorAll(".add-chip")]
+        .map((c) => {
+          const sz = c.dataset.size ? `<em>${esc(c.dataset.size)}</em> ` : "";
+          return `<span class="dish-zoom-price">${sz}${money(parseFloat(c.dataset.price))}</span>`;
+        })
+        .join("");
+
+      if (active) active.classList.remove("is-zoomed");
+      active = dish;
+      dish.classList.add("is-zoomed");
+      layer.classList.add("is-on");
+    }
+
+    function hide() {
+      layer.classList.remove("is-on");
+      if (active) active.classList.remove("is-zoomed");
+      active = null;
+      card.style.setProperty("--rx", "0deg");
+      card.style.setProperty("--ry", "0deg");
+    }
+
+    gridEl.addEventListener("pointerover", (e) => {
+      const dish = e.target.closest(".dish");
+      clearTimeout(hideT);
+      if (!dish) { hideT = setTimeout(hide, HIDE_DELAY); return; } // gap between cards
+      if (dish === active) return;
+      clearTimeout(showT);
+      showT = setTimeout(() => show(dish), SHOW_DELAY);
+    });
+
+    gridEl.addEventListener("pointerleave", () => {
+      clearTimeout(showT);
+      clearTimeout(hideT);
+      hideT = setTimeout(hide, HIDE_DELAY);
+    });
+
+    // parallax tilt: the card leans toward wherever the cursor is
+    gridEl.addEventListener("pointermove", (e) => {
+      if (!layer.classList.contains("is-on")) return;
+      const rx = (0.5 - e.clientY / window.innerHeight) * 12;
+      const ry = (e.clientX / window.innerWidth - 0.5) * 16;
+      card.style.setProperty("--rx", rx.toFixed(2) + "deg");
+      card.style.setProperty("--ry", ry.toFixed(2) + "deg");
+    });
+
+    // switching category replaces the grid — drop any preview of a now-gone card
+    tabsEl.addEventListener("click", () => { clearTimeout(showT); hide(); });
+    window.addEventListener("scroll", () => { clearTimeout(showT); hide(); }, { passive: true });
+    window.addEventListener("keydown", (e) => { if (e.key === "Escape") { clearTimeout(showT); hide(); } });
+  })();
+
   renderTabs();
   renderGrid();
 })();
