@@ -314,6 +314,9 @@ function dishImage(name, cat) {
       const py = (e.clientY - r.top) / r.height - 0.5;
       dish.style.setProperty("--rx", (-py * MAX_X).toFixed(2) + "deg");
       dish.style.setProperty("--ry", (px * MAX_Y).toFixed(2) + "deg");
+      // feeds the specular highlight that tracks the cursor across the card
+      dish.style.setProperty("--mx", ((px + 0.5) * 100).toFixed(1) + "%");
+      dish.style.setProperty("--my", ((py + 0.5) * 100).toFixed(1) + "%");
     });
 
     // level the card out again as the cursor leaves it

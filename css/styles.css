@@ -914,11 +914,75 @@ ul{ list-style:none; }
   transition:transform .6s var(--ease);
 }
 /* the photo keeps growing as the card pops — the second half of the effect */
+/* On the popped card the photo is confined to the upper part, so the text
+   below never lands on top of the food. The blurred backdrop still fills the
+   whole card behind it, so there is no visible edge where the photo stops. */
 .menu-grid .dish:hover .dish-thumb img{
-  transform:scale(1.12);
-  object-position:50% 31%;   /* rides up so the description clears the plate */
+  height:62%;
+  object-position:50% 48%;
+  transform:scale(1.04);
 }
 .menu-grid .dish:hover .dish-thumb::before{ transform:scale(1.24); }
+
+/* A warm specular highlight that follows the cursor across the card, as if a
+   light were catching the surface as it tilts. --mx/--my come from menu.js.
+   z-index:1 keeps it above the photo but *under* the text panel (z-index:2),
+   so it never washes out the description. */
+.menu-grid .dish::after{
+  content:""; position:absolute; inset:0; z-index:1;
+  border-radius:inherit; pointer-events:none;
+  background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),
+    rgba(255,246,226,.32), rgba(255,206,122,.12) 42%, transparent 70%);
+  mix-blend-mode:screen;
+  opacity:0; transition:opacity .45s var(--ease);
+}
+.menu-grid .dish:hover::after{ opacity:1; }
+
+/* the price chips catch the same gold light once the card is up front */
+.menu-grid .dish:hover .add-chip{
+  box-shadow:inset 0 0 0 1.4px var(--gold), 0 8px 20px -9px rgba(198,161,91,.85);
+}
+
+/* ---------------------------------------------------------------------
+   Text lifts out of the card toward the viewer on hover.
+   .dish-body needs preserve-3d of its own, otherwise its children are
+   flattened into the panel's plane and translateZ does nothing. Each
+   line sits at a different depth and starts at a different moment, so
+   they peel forward one after another rather than as one slab.
+   Depth is cumulative with the card's own 680px push, so these small
+   values render noticeably larger than the card face — the text really
+   does break the frame's outline.
+   --------------------------------------------------------------------- */
+.menu-grid .dish-body{ transform-style:preserve-3d; }
+.menu-grid .dish-name,
+.menu-grid .dish-ar,
+.menu-grid .dish-desc,
+.menu-grid .dish-options{
+  transition:transform .45s cubic-bezier(.34,1.4,.64,1), opacity .3s var(--ease);
+}
+.menu-grid .dish:hover .dish-name   { transform:translateZ(34px); transition-delay:.04s; }
+.menu-grid .dish:hover .dish-ar     { transform:translateZ(30px); transition-delay:.08s; }
+.menu-grid .dish:hover .dish-desc   { transform:translateZ(22px); transition-delay:.12s; }
+.menu-grid .dish:hover .dish-options{ transform:translateZ(44px); transition-delay:.16s; }
+
+/* The description sat as plain white on top of the photo, so it washed out
+   over the pale dishes. It now carries its own dark plate, which keeps it
+   readable no matter how bright the food behind it is. */
+/* No plate behind the text itself: -webkit-line-clamp with padding lets the
+   next line bleed into the padding box, which showed as a sliced half-line.
+   The panel below carries the darkness instead. */
+.menu-grid .dish:hover .dish-desc{
+  color:#FFF4E2;
+  text-shadow:0 1px 3px rgba(0,0,0,.85);
+}
+.menu-grid .dish-name{ text-shadow:0 2px 6px rgba(0,0,0,.75); }
+.menu-grid .dish-ar{ text-shadow:0 2px 6px rgba(0,0,0,.7); }
+/* The photo is confined to the top 62% while hovered, so the panel below it
+   can go properly dark for legibility without covering any food. */
+.menu-grid .dish:hover .dish-body{
+  background:linear-gradient(to top,
+    rgba(10,7,4,.97) 58%, rgba(10,7,4,.88) 78%, rgba(10,7,4,0) 100%);
+}
 
 /* real photos (item.photo) are meant to fill the frame — no letterbox, no blur */
 .menu-grid .dish-thumb--photo img{ object-fit:cover; padding:0; }
@@ -956,13 +1020,13 @@ ul{ list-style:none; }
 }
 /* the popped card has room, so the description appears with it */
 .menu-grid .dish:hover .dish-desc{
-  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:4; overflow:hidden;
+  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden;
 }
 
-.menu-grid .dish-options{ margin-top:.45rem; gap:.4rem; }
+.menu-grid .dish-options{ margin-top:.4rem; gap:.34rem; }
 .menu-grid .add-chip{
   background:rgba(255,255,255,.12); color:#fff;
-  font-size:.76rem; padding:.38rem .68rem;
+  font-size:.68rem; padding:.3rem .52rem;
   box-shadow:inset 0 0 0 1.4px rgba(232,214,172,.5);
   backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
 }
