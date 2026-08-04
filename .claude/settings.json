@@ -4,7 +4,9 @@
       "Bash(python3 -c ' *)",
       "Bash(curl -s -o /dev/null -w \"server=%{http_code}\\\\n\" http://localhost:8080/__px.html)",
       "Bash(awk -F: '$1>640')",
-      "Bash(grep -n 'dish-thumb\\\\${item.photo' js/menu.js)"
+      "Bash(grep -n 'dish-thumb\\\\${item.photo' js/menu.js)",
+      "Bash(curl -s \"http://localhost:8080/js/animations.js?v=20\")",
+      "Bash(awk 'NR>=560 && NR<=575' js/animations.js)"
     ]
   }
 }

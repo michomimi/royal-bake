@@ -563,6 +563,65 @@
   })();
 
   /* =================================================================
+     6.5 CONTACT BANNER — cursor + scroll depth on the photo layer
+     CSS owns the look and the idle drift; this only feeds it positions,
+     so with JS off the banner still animates, just without parallax.
+     ================================================================= */
+  (function bannerDepth() {
+    const banner = $('body[data-page="contact"] .page-banner');
+    if (!banner || reduce) return;
+
+    const set = (k, v) => banner.style.setProperty(k, v);
+
+    // No (hover:hover) guard here on purpose: it is evaluated once at load, and
+    // a browser that reports its pointer capability late would leave the banner
+    // permanently inert. Nothing happens without a pointer anyway, and a touch
+    // drag across the banner just nudges the photo, which is harmless.
+    {
+      let rect = null, frame = 0, px = 0, py = 0;
+
+      function render() {
+        // photo and copy move in opposite directions by different amounts —
+        // that mismatch is what the eye reads as one being further away
+        set("--bx", (-px * 30).toFixed(1) + "px");
+        set("--by", (-py * 20).toFixed(1) + "px");
+        set("--brx", (py * 4).toFixed(2) + "deg");
+        set("--bry", (-px * 6).toFixed(2) + "deg");
+        set("--tx", (px * 15).toFixed(1) + "px");
+        set("--ty", (py * 9).toFixed(1) + "px");
+        set("--mx", ((px + 0.5) * 100).toFixed(1) + "%");
+        set("--my", ((py + 0.5) * 100).toFixed(1) + "%");
+        frame = 0;
+      }
+
+      banner.addEventListener("pointerenter", () => { rect = banner.getBoundingClientRect(); });
+      banner.addEventListener("pointermove", (e) => {
+        if (!rect) rect = banner.getBoundingClientRect();
+        px = clamp((e.clientX - rect.left) / rect.width - 0.5, -0.5, 0.5);
+        py = clamp((e.clientY - rect.top) / rect.height - 0.5, -0.5, 0.5);
+        if (!frame) frame = raf(render);
+      });
+      banner.addEventListener("pointerleave", () => {
+        px = py = 0;
+        if (!frame) frame = raf(render);
+      });
+    }
+
+    // slow drift as the banner scrolls past, on top of the idle animation
+    let ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      raf(() => {
+        set("--sy", (clamp(window.scrollY, 0, 600) * 0.08).toFixed(1) + "px");
+        ticking = false;
+      });
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  })();
+
+  /* =================================================================
      7. 3D TILT + GLARE on cards (pointer-capable devices only)
      ================================================================= */
   (function tilt() {
