@@ -256,17 +256,55 @@ function dishImage(name, cat) {
   });
 
   /* ---------------------------------------------------------------
-     3D tilt — the card leans toward the cursor while it is hovered.
-     CSS owns the pop-out itself (.dish:hover); this only feeds it the
-     two angles, so with JS off the card still pops, just without tilt.
+     3D hover: lean the card toward the cursor, and pick a transform
+     origin that keeps the enlarged card on screen. CSS owns the pop
+     itself (.menu-grid .dish:hover), so with JS off the card still
+     pops — it just grows from its centre and never leans.
      --------------------------------------------------------------- */
   (function dishTilt() {
     // pointer-driven and decorative — skip touch, skip reduced motion
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
     if (typeof prefersReducedMotion !== "undefined" && prefersReducedMotion) return;
 
-    const MAX_X = 9;  // degrees of lean, top/bottom
-    const MAX_Y = 12; // degrees of lean, left/right
+    const MAX_X = 8;    // degrees of lean, top/bottom
+    const MAX_Y = 10;   // degrees of lean, left/right
+    const PERSP = 1000; // must match --persp in styles.css
+    const POP = 440;    // must match --pop   in styles.css
+    // 1.08 covers the extra width/height the lean adds on top of the growth,
+    // which a pure scale figure would miss and let the card clip at the edge
+    const SCALE = (PERSP / (PERSP - POP)) * 1.08; // ~1.93x effective footprint
+    const EDGE = 12;    // breathing room from the viewport edge
+    const HEADER = 88;  // fixed header height, so it never grows up behind it
+
+    // Where along the card should the growth be anchored? Centre normally, but
+    // slid toward the near edge for cards by the screen border, so an enlarged
+    // card never overflows (body has overflow-x:hidden and would clip it).
+    function anchor(start, size, min, max) {
+      const k = size * (SCALE - 1);
+      if (k <= 0) return 0.5;
+      const lo = (start + size * SCALE - max) / k; // any less and it overflows the far edge
+      const hi = (start - min) / k;                // any more and it overflows the near edge
+      if (lo > hi) return 0.5;                     // too big to fit either way — centre it
+      // keep the anchor inside the card: outside it, growing would drag the
+      // card away from where it sits instead of just expanding it
+      return Math.min(Math.max(0, Math.min(Math.max(0.5, lo), hi)), 1);
+    }
+
+    function place(dish) {
+      const r = dish.getBoundingClientRect(); // untransformed: hover styles land after this
+      const fx = anchor(r.left, r.width, EDGE, window.innerWidth - EDGE);
+      const fy = anchor(r.top, r.height, HEADER + EDGE, window.innerHeight - EDGE);
+      dish.style.transformOrigin = `${(fx * 100).toFixed(1)}% ${(fy * 100).toFixed(1)}%`;
+    }
+
+    let entered = null;
+
+    gridEl.addEventListener("pointerover", (e) => {
+      const dish = e.target.closest(".dish");
+      if (!dish || dish === entered) return;
+      entered = dish;
+      place(dish); // once per entry — after this the rect is scaled and useless
+    });
 
     gridEl.addEventListener("pointermove", (e) => {
       const dish = e.target.closest(".dish");
@@ -282,6 +320,7 @@ function dishImage(name, cat) {
     gridEl.addEventListener("pointerout", (e) => {
       const dish = e.target.closest(".dish");
       if (!dish || dish.contains(e.relatedTarget)) return;
+      if (dish === entered) entered = null;
       dish.style.setProperty("--rx", "0deg");
       dish.style.setProperty("--ry", "0deg");
     });

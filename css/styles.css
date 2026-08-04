@@ -313,22 +313,45 @@ ul{ list-style:none; }
   transform-style:preserve-3d; /* lets the photo sit at its own depth inside the card */
   transition:transform .35s var(--ease), box-shadow .35s var(--ease), border-color .3s var(--ease);
 }
-/* Hovering pushes the card out of the page toward the viewer and leans it
-   toward the cursor (--rx/--ry are set per-card by js/menu.js).
-   perspective() is per-element on purpose: each card gets its own vanishing
-   point at its own centre, so a card at the edge of the grid pops straight
-   out too instead of skewing toward the middle of the page.
+/* Hovering pushes the card far out of the page toward the viewer: it grows to
+   roughly a quarter of the screen while staying anchored where it sits.
+   The size comes from translateZ under perspective() rather than scale(), so
+   it is genuine perspective growth — near edges enlarge more than far ones —
+   and it leans toward the cursor (--rx/--ry are set per-card by js/menu.js).
+
+   --pop and --persp are the two dials: visual growth = persp / (persp - pop),
+   so 1000/(1000-440) = 1.79x. js/menu.js reads the same two numbers to keep
+   the enlarged card from running off the edge of the screen.
+
    Scoped under .menu-grid deliberately: the cards also carry .reveal, and
    `.reveal.in{transform:none}` further down this file ties on specificity
    and would win on source order, cancelling the whole effect. */
 .menu-grid .dish{
-  transition:transform .35s var(--ease), box-shadow .35s var(--ease), border-color .3s var(--ease);
+  --pop:0px;
+  --persp:1000px;
+  backface-visibility:hidden;      /* keeps text crisp while it scales up */
+  /* springy easing overshoots slightly, so it lands with a "pump" */
+  transition:transform .55s cubic-bezier(.34,1.42,.64,1),
+             box-shadow .55s var(--ease),
+             border-color .3s var(--ease);
 }
 .menu-grid .dish:hover{
-  z-index:5;
-  transform:perspective(780px) translateZ(52px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
-  box-shadow:0 34px 64px -26px rgba(36,31,26,.55), 0 0 0 1px var(--gold-lite);
+  --pop:440px;
+  z-index:20;
+  transform:perspective(var(--persp)) translateZ(var(--pop))
+            rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  box-shadow:0 70px 130px -45px rgba(36,31,26,.75), 0 0 0 1px var(--gold);
   border-color:var(--gold);
+}
+/* once it has arrived, it breathes gently so it never looks frozen.
+   `translate` is the standalone property, so it layers on top of the
+   transform above instead of overwriting it */
+@keyframes dishBreathe{
+  from{ translate:0 -5px; }
+  to  { translate:0 5px; }
+}
+.menu-grid .dish:hover{
+  animation:dishBreathe 2.8s ease-in-out .55s infinite alternate;
 }
 
 /* dish photo thumbnail */
@@ -344,9 +367,9 @@ ul{ list-style:none; }
 /* inner layers ride further forward than the card face — that parallax between
    photo, text and card edge is what reads as depth rather than a flat scale-up */
 .dish-thumb{ transition:transform .35s var(--ease), box-shadow .35s var(--ease); }
-.menu-grid .dish:hover .dish-thumb{ transform:translateZ(38px); box-shadow:0 18px 30px -18px rgba(36,31,26,.55), inset 0 0 0 1px var(--line-2); }
+.menu-grid .dish:hover .dish-thumb{ transform:translateZ(26px); box-shadow:0 18px 30px -18px rgba(36,31,26,.5), inset 0 0 0 1px var(--line-2); }
 .dish-body{ transition:transform .35s var(--ease); }
-.menu-grid .dish:hover .dish-body{ transform:translateZ(20px); }
+.menu-grid .dish:hover .dish-body{ transform:translateZ(12px); }
 /* real photos fill the frame edge-to-edge (no cutout padding) */
 .dish-thumb--photo{ background:var(--bg-3); }
 .dish-thumb--photo img{ object-fit:cover; padding:0; }
