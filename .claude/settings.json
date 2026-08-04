@@ -3,7 +3,8 @@
     "allow": [
       "Bash(python3 -c ' *)",
       "Bash(curl -s -o /dev/null -w \"server=%{http_code}\\\\n\" http://localhost:8080/__px.html)",
-      "Bash(awk -F: '$1>640')"
+      "Bash(awk -F: '$1>640')",
+      "Bash(grep -n 'dish-thumb\\\\${item.photo' js/menu.js)"
     ]
   }
 }

@@ -893,14 +893,38 @@ ul{ list-style:none; }
   border-radius:inherit; overflow:hidden;
   display:block; background:var(--bg-3); box-shadow:none;
 }
+/* The plate is shown whole (contain) rather than cropped to fill, so nothing
+   gets cut off the sides — the source photos run from 1.15 to 1.49 aspect, so
+   no single frame shape could hold them all without trimming.
+   The gap that leaves is filled by a blurred copy of the same photo: the dish
+   PNGs each have their own slightly different cream background (244..252 across
+   the set), so one flat frame colour would show a seam on some tiles. */
+.menu-grid .dish-thumb::before{
+  content:""; position:absolute; inset:0; z-index:0;
+  background:var(--img) center/cover no-repeat;
+  transform:scale(1.16);
+  filter:blur(17px) saturate(1.06);
+  transition:transform .6s var(--ease);
+}
 .menu-grid .dish-thumb img{
-  width:100%; height:100%; object-fit:cover; padding:0;
-  /* biased upward so the dish sits above the text scrim, not behind it */
-  object-position:50% 38%;
+  position:relative; z-index:1;
+  width:100%; height:100%; object-fit:contain;
+  padding:7%;                    /* breathing room so the plate never touches the frame */
+  object-position:50% 40%;       /* lifted clear of the text scrim below */
   transition:transform .6s var(--ease);
 }
 /* the photo keeps growing as the card pops — the second half of the effect */
-.menu-grid .dish:hover .dish-thumb img{ transform:scale(1.14); }
+.menu-grid .dish:hover .dish-thumb img{
+  transform:scale(1.12);
+  object-position:50% 31%;   /* rides up so the description clears the plate */
+}
+.menu-grid .dish:hover .dish-thumb::before{ transform:scale(1.24); }
+
+/* real photos (item.photo) are meant to fill the frame — no letterbox, no blur */
+.menu-grid .dish-thumb--photo img{ object-fit:cover; padding:0; }
+.menu-grid .dish-thumb--photo::before{ display:none; }
+/* nothing to blur when the image failed to load */
+.menu-grid .dish-thumb.no-img::before{ display:none; }
 
 /* inner depth layers are off in tile mode: the thumb and body are absolutely
    positioned to the card edges, so pushing them forward in Z would scale them

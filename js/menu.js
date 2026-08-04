@@ -222,7 +222,7 @@ function dishImage(name, cat) {
       const img = item.img || dishImage(item.name, cat.id);
 
       return `<article class="dish reveal" style="--d:${(i % 4) * 60}ms">
-        <div class="dish-thumb${item.photo ? " dish-thumb--photo" : ""}">
+        <div class="dish-thumb${item.photo ? " dish-thumb--photo" : ""}" style="--img:url('${esc(img)}')">
           <img src="${esc(img)}" alt="${esc(item.name)}" loading="lazy" decoding="async"
                onerror="this.closest('.dish-thumb').classList.add('no-img'); this.remove();" />
         </div>
