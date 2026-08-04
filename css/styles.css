@@ -320,7 +320,7 @@ ul{ list-style:none; }
    and it leans toward the cursor (--rx/--ry are set per-card by js/menu.js).
 
    --pop and --persp are the two dials: visual growth = persp / (persp - pop),
-   so 1000/(1000-440) = 1.79x. js/menu.js reads the same two numbers to keep
+   so 1200/(1200-630) = 2.11x. js/menu.js reads the same two numbers to keep
    the enlarged card from running off the edge of the screen.
 
    Scoped under .menu-grid deliberately: the cards also carry .reveal, and
@@ -328,7 +328,7 @@ ul{ list-style:none; }
    and would win on source order, cancelling the whole effect. */
 .menu-grid .dish{
   --pop:0px;
-  --persp:1000px;
+  --persp:1200px;
   backface-visibility:hidden;      /* keeps text crisp while it scales up */
   /* springy easing overshoots slightly, so it lands with a "pump" */
   transition:transform .55s cubic-bezier(.34,1.42,.64,1),
@@ -336,7 +336,7 @@ ul{ list-style:none; }
              border-color .3s var(--ease);
 }
 .menu-grid .dish:hover{
-  --pop:440px;
+  --pop:630px;
   z-index:20;
   transform:perspective(var(--persp)) translateZ(var(--pop))
             rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
@@ -876,7 +876,7 @@ ul{ list-style:none; }
    Markup is unchanged — js/menu.js still emits .dish > .dish-thumb +
    .dish-body; only the styling here repositions those two.
    ===================================================================== */
-.menu-grid{ grid-template-columns:repeat(auto-fill,minmax(272px,1fr)); gap:1.3rem; }
+.menu-grid{ grid-template-columns:repeat(auto-fill,minmax(238px,1fr)); gap:1.2rem; }
 
 .menu-grid .dish{
   display:block; padding:0;
@@ -900,7 +900,7 @@ ul{ list-style:none; }
   transition:transform .6s var(--ease);
 }
 /* the photo keeps growing as the card pops — the second half of the effect */
-.menu-grid .dish:hover .dish-thumb img{ transform:scale(1.22); }
+.menu-grid .dish:hover .dish-thumb img{ transform:scale(1.14); }
 
 /* inner depth layers are off in tile mode: the thumb and body are absolutely
    positioned to the card edges, so pushing them forward in Z would scale them
@@ -911,17 +911,17 @@ ul{ list-style:none; }
 /* text over the photo */
 .menu-grid .dish-body{
   position:absolute; left:0; right:0; bottom:0; z-index:2;
-  padding:2.4rem 1.05rem 1rem;
-  gap:.3rem;
+  padding:2.1rem .9rem .9rem;
+  gap:.25rem;
   border-radius:0 0 var(--radius) var(--radius);
   background:linear-gradient(to top,
     rgba(18,14,10,.95) 16%, rgba(18,14,10,.78) 52%, rgba(18,14,10,0) 100%);
   color:#fff;
 }
-.menu-grid .dish-name{ color:#fff; font-size:1.22rem; }
-.menu-grid .dish-ar{ color:var(--gold-lite); }
+.menu-grid .dish-name{ color:#fff; font-size:1.06rem; }
+.menu-grid .dish-ar{ color:var(--gold-lite); font-size:1.12rem; }
 .menu-grid .dish-desc{
-  color:rgba(255,255,255,.82); font-size:.85rem; line-height:1.45;
+  color:rgba(255,255,255,.82); font-size:.8rem; line-height:1.42;
   display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden;
 }
 /* the popped card is big enough to show the full description */

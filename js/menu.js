@@ -268,11 +268,11 @@ function dishImage(name, cat) {
 
     const MAX_X = 8;    // degrees of lean, top/bottom
     const MAX_Y = 10;   // degrees of lean, left/right
-    const PERSP = 1000; // must match --persp in styles.css
-    const POP = 440;    // must match --pop   in styles.css
+    const PERSP = 1200; // must match --persp in styles.css
+    const POP = 630;    // must match --pop   in styles.css
     // 1.08 covers the extra width/height the lean adds on top of the growth,
     // which a pure scale figure would miss and let the card clip at the edge
-    const SCALE = (PERSP / (PERSP - POP)) * 1.08; // ~1.93x effective footprint
+    const SCALE = (PERSP / (PERSP - POP)) * 1.08; // ~2.28x effective footprint
     const EDGE = 12;    // breathing room from the viewport edge
     const HEADER = 88;  // fixed header height, so it never grows up behind it
 
