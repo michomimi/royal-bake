@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0}#f{width:1280px;height:900px;border:0}
+#log{position:fixed;bottom:0;left:0;right:0;font:11px monospace;background:#000;color:#0f0;padding:3px;z-index:9}</style>
+</head><body>
+<iframe id="f" src="/menu.html?v=4"></iframe><div id="log">…</div>
+<script>
+const CARD=Number(new URLSearchParams(location.search).get('card')||1);
+const HOVER=new URLSearchParams(location.search).get('hover')!=='0';
+f.onload=()=>{const w=f.contentWindow,d=f.contentDocument;setTimeout(()=>{
+  const out=[];
+  for(const sh of d.styleSheets){let rs;try{rs=sh.cssRules}catch(e){continue}
+    for(const r of rs){if(r.selectorText&&r.selectorText.includes('.dish:hover'))
+      out.push(r.cssText.replace(/\.dish:hover/g,'.dish.__h'));}}
+  const st=d.createElement('style');
+  st.textContent='*{transition:none !important;animation:none !important}\n'+out.join('\n');
+  d.head.appendChild(st);
+  const cards=d.querySelectorAll('.dish'), t=cards[CARD];
+  t.scrollIntoView({block:'center',behavior:'instant'});
+  if(HOVER){
+    const P=1000,POP=440,S=P/(P-POP)*1.08,E=12,H=88;
+    const an=(a,sz,mn,mx)=>{const k=sz*(S-1);if(k<=0)return .5;
+      const lo=(a+sz*S-mx)/k,hi=(a-mn)/k;
+      return lo>hi?.5:Math.min(Math.max(0,Math.min(Math.max(.5,lo),hi)),1);};
+    const r0=t.getBoundingClientRect();
+    t.style.transformOrigin=`${(an(r0.left,r0.width,E,w.innerWidth-E)*100).toFixed(1)}% ${(an(r0.top,r0.height,H+E,w.innerHeight-E)*100).toFixed(1)}%`;
+    t.style.setProperty('--rx','-5deg');t.style.setProperty('--ry','8deg');
+    t.classList.add('__h');
+  }
+  setTimeout(()=>{const r=t.getBoundingClientRect();
+    log.textContent=`card=${CARD} hover=${HOVER} size=${Math.round(r.width)}x${Math.round(r.height)} `
+      +`= ${((r.width*r.height)/(w.innerWidth*w.innerHeight)*100).toFixed(1)}% of screen `
+      +`| onScreen=${r.left>=-1&&r.right<=w.innerWidth+1}`;},400);
+},900);};
+</script></body></html>

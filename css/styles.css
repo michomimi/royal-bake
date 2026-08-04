@@ -862,3 +862,81 @@ ul{ list-style:none; }
 @media (max-width:560px){
   .fav-thumb{ width:110px; height:110px; }
 }
+
+/* =====================================================================
+   PHOTO-FIRST DISH TILES
+   The dish photo fills the whole card with the name, Arabic name and
+   prices laid over a dark scrim at the bottom.
+
+   Note on the imagery: the dish PNGs are not cut-outs — each has a solid
+   cream background baked in (corner pixels ~#F6E7DB). A fully dark tile
+   would therefore show a cream block behind every dish, so the darkness
+   lives in the gradient scrim over the photo instead of behind it.
+
+   Markup is unchanged — js/menu.js still emits .dish > .dish-thumb +
+   .dish-body; only the styling here repositions those two.
+   ===================================================================== */
+.menu-grid{ grid-template-columns:repeat(auto-fill,minmax(272px,1fr)); gap:1.3rem; }
+
+.menu-grid .dish{
+  display:block; padding:0;
+  aspect-ratio:1/1;
+  border-radius:var(--radius);
+  border-color:var(--line);
+  background:var(--bg-3);
+  overflow:visible;   /* must stay visible: overflow would flatten preserve-3d */
+}
+
+/* photo fills the tile */
+.menu-grid .dish-thumb{
+  position:absolute; inset:0; width:auto; height:auto;
+  border-radius:inherit; overflow:hidden;
+  display:block; background:var(--bg-3); box-shadow:none;
+}
+.menu-grid .dish-thumb img{
+  width:100%; height:100%; object-fit:cover; padding:0;
+  /* biased upward so the dish sits above the text scrim, not behind it */
+  object-position:50% 38%;
+  transition:transform .6s var(--ease);
+}
+/* the photo keeps growing as the card pops — the second half of the effect */
+.menu-grid .dish:hover .dish-thumb img{ transform:scale(1.22); }
+
+/* inner depth layers are off in tile mode: the thumb and body are absolutely
+   positioned to the card edges, so pushing them forward in Z would scale them
+   past those edges and spill outside the rounded corners */
+.menu-grid .dish:hover .dish-thumb{ transform:none; box-shadow:none; }
+.menu-grid .dish:hover .dish-body{ transform:none; }
+
+/* text over the photo */
+.menu-grid .dish-body{
+  position:absolute; left:0; right:0; bottom:0; z-index:2;
+  padding:2.4rem 1.05rem 1rem;
+  gap:.3rem;
+  border-radius:0 0 var(--radius) var(--radius);
+  background:linear-gradient(to top,
+    rgba(18,14,10,.95) 16%, rgba(18,14,10,.78) 52%, rgba(18,14,10,0) 100%);
+  color:#fff;
+}
+.menu-grid .dish-name{ color:#fff; font-size:1.22rem; }
+.menu-grid .dish-ar{ color:var(--gold-lite); }
+.menu-grid .dish-desc{
+  color:rgba(255,255,255,.82); font-size:.85rem; line-height:1.45;
+  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden;
+}
+/* the popped card is big enough to show the full description */
+.menu-grid .dish:hover .dish-desc{ -webkit-line-clamp:4; }
+
+.menu-grid .dish-options{ margin-top:.55rem; }
+.menu-grid .add-chip{
+  background:rgba(255,255,255,.12); color:#fff;
+  box-shadow:inset 0 0 0 1.4px rgba(232,214,172,.5);
+  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+}
+.menu-grid .add-chip .sz{ color:rgba(255,255,255,.75); }
+.menu-grid .add-chip:hover{ background:var(--gold); color:var(--ink); box-shadow:inset 0 0 0 1.4px var(--gold); }
+.menu-grid .add-chip:hover .sz{ color:var(--ink); }
+
+@media (max-width:560px){
+  .menu-grid .dish{ aspect-ratio:4/5; }
+}
