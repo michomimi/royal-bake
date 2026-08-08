@@ -6,7 +6,12 @@
       "Bash(awk -F: '$1>640')",
       "Bash(grep -n 'dish-thumb\\\\${item.photo' js/menu.js)",
       "Bash(curl -s \"http://localhost:8080/js/animations.js?v=20\")",
-      "Bash(awk 'NR>=560 && NR<=575' js/animations.js)"
+      "Bash(awk 'NR>=560 && NR<=575' js/animations.js)",
+      "Read(//Users/michealjabour/Desktop/dj-site/**)",
+      "Bash(curl -sL --max-time 25 https://princetires.ca/ -o /private/tmp/claude-501/-Users-michealjabour-Desktop-royal-bake/6206b4b9-cf4a-40d8-80d5-b9dc1d57f6ba/scratchpad/pt.html -w \"status=%{http_code} size=%{size_download}\\\\n\")",
+      "Bash(grep -oiE 'animation:[^;\"]{0,60}|@keyframes [a-zA-Z-]+|transition:[^;\"]{0,45}' pt.html)",
+      "Bash(\"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" --headless --disable-gpu --no-sandbox --window-size=1280,900 --virtual-time-budget=12000 --screenshot=pt.png https://princetires.ca/)",
+      "Bash(git -C /Users/michealjabour/Desktop/royal-bake status --short)"
     ]
   }
 }
